@@ -19,7 +19,7 @@ class Header extends React.Component {
               <Link to="/meeting/create">Create Meeting</Link>
             </li>
             <li className="header-nav-button">
-              <Link to="/meeting/view">View Meeting</Link>
+              <Link to="/meeting/view">View Meetings</Link>
             </li>
           </ul>
         </nav>
