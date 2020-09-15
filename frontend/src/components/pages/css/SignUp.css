@@ -3,9 +3,9 @@
   flex-direction: column;
   justify-content: center;
   background: #fff;
-  padding: 4em 4em;
-  margin: 50px auto 0;
-  box-shadow: 0 0 1em #222;
+  padding: 20px;
+  margin: 25px auto 0;
+  box-shadow: 0 0 0.5em #222;
   border-radius: 2px;
 }
 
@@ -22,9 +22,11 @@
 #signup-form div label {
   flex: 1;
   margin-right: 10px;
+  padding-bottom: 0;
   text-align: right;
   vertical-align: middle;
-  display: table-cell;
+  display: inline-block;
+  min-width: 150px;
 }
 
 #signup-form div input {
@@ -37,4 +39,5 @@
   border: 1px solid #dbdbdb;
   padding: 0.5em 0.5em;
   border-radius: 2px;
+  min-width: 250px;
 }
