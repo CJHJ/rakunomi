@@ -1,2 +1,1 @@
-# rakunomi
-Online nomikai in a new form.
+# Welcome to Rakunomi!
