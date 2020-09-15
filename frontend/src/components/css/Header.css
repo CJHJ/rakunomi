@@ -1,0 +1,30 @@
+#app-header {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  background-color: #d97904;
+  color: white;
+}
+
+#header-logo {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  margin-right: 100px;
+}
+
+#header-navbar {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+}
+
+#header-user {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
