@@ -10,13 +10,21 @@ class Header extends React.Component {
           <h1>RakuNomi</h1>
         </div>
         <nav id="header-navbar">
-          <button className="header-nav-button">Home</button>
-          <button className="header-nav-button">Create Meeting</button>
-          <button className="header-nav-button">View Meeting</button>
+          <ul id="navbar-list">
+            <li className="header-nav-button">
+              <a href="">Home</a>
+            </li>
+            <li className="header-nav-button">
+              <a href="">Create Meeting</a>
+            </li>
+            <li className="header-nav-button">
+              <a href="">View Meeting</a>
+            </li>
+          </ul>
         </nav>
         <div id="header-user">
-          <button className="header-signup">Sign In</button>
-          <button className="header-signin">Sign Up</button>
+          <button className="header-user-button">Sign In</button>
+          <button className="header-user-button">Sign Up</button>
         </div>
       </header>
     );
