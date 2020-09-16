@@ -2,9 +2,23 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 import "./css/Header.css";
+import AuthService from "../services/auth.service";
 
 class Header extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.handleLogout = this.handleLogout.bind(this);
+  }
+
+  handleLogout() {
+    AuthService.logout();
+    window.location.reload();
+  }
+
   render() {
+    const currentUser = AuthService.getCurrentUser();
+
     return (
       <header id="app-header">
         <div id="header-logo">
@@ -15,21 +29,34 @@ class Header extends React.Component {
             <li className="header-nav-button">
               <Link to="/">Home</Link>
             </li>
-            <li className="header-nav-button">
-              <Link to="/meeting/create">Create Meeting</Link>
-            </li>
-            <li className="header-nav-button">
-              <Link to="/meeting/view">View Meetings</Link>
-            </li>
+            {currentUser && (
+              <li className="header-nav-button">
+                <Link to="/meeting/create">Create Meeting</Link>
+              </li>
+            )}
+            {currentUser && (
+              <li className="header-nav-button">
+                <Link to="/meeting/view">View Meetings</Link>
+              </li>
+            )}
           </ul>
         </nav>
         <div id="header-user">
-          <Link to="/signin">
-            <button className="header-user-button">Sign In</button>
-          </Link>
-          <Link to="/signup">
-            <button className="header-user-button">Sign Up</button>
-          </Link>
+          {!currentUser && (
+            <Link to="/signin">
+              <button className="header-user-button">Sign In</button>
+            </Link>
+          )}
+          {!currentUser && (
+            <Link to="/signup">
+              <button className="header-user-button">Sign Up</button>
+            </Link>
+          )}
+          {currentUser && (
+            <button className="header-user-button" onClick={this.handleLogout}>
+              Logout
+            </button>
+          )}
         </div>
       </header>
     );

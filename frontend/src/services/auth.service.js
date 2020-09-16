@@ -23,8 +23,8 @@ const login = (username, password) => {
     data: loginFormData,
     headers: { "Content-Type": "multipart/form-data" },
   }).then((response) => {
-    if (response.data.token) {
-      localStorage.setItem("user", JSON.stringify(response.data.token));
+    if (response.data) {
+      localStorage.setItem("user", JSON.stringify(response.data));
     }
 
     return response.data;
