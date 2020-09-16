@@ -53,6 +53,11 @@ class Header extends React.Component {
             </Link>
           )}
           {currentUser && (
+            <div className="header-user-greeting">
+              Hello, {currentUser.user_name}
+            </div>
+          )}
+          {currentUser && (
             <button className="header-user-button" onClick={this.handleLogout}>
               Logout
             </button>
