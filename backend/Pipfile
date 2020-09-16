@@ -15,6 +15,7 @@ flask-wtf = "*"
 email-validator = "*"
 requests = "*"
 yapf = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.7"
