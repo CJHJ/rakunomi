@@ -1,1 +1,1 @@
-export { default as ItemSelector } from "./ItemSelector";
+export { default as MeetingList } from "./MeetingList";

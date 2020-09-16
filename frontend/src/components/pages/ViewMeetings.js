@@ -1,92 +1,67 @@
 import React from "react";
-import { ItemSelector } from "../organisms";
-import { Card, Button } from "react-bootstrap";
+import { MeetingList } from "../organisms";
+import { Container, Tabs, Tab, Modal, Button } from "react-bootstrap";
 
-const MENU_ITEMS = ["招待された", "参加予定", "参加済み", "全ての履歴"];
+import {
+  fetchInvitedMeetings,
+  fetchUpcomingMeetings,
+  fetchParticipatedMeetings,
+  fetchAllMeetings,
+} from "../../lib/api/meetings";
 
-const ACTION_NAMES = ["Join", "View Detail", "View Detail", "Give Feedback"];
-const MEETING_TEMPLATE = {
-  meetingID: "meeting ID",
-  groupName: "groupName",
-  leaderName: "leaderName",
-  dateTime: "20200918000000",
-};
-
-const MeetingList = (props) => {
-  const renderRow = (meeting) => {
-    return (
-      <Card key={meeting.meetingID}>
-        <Card.Body>
-          <Card.Title>{meeting.groupName}</Card.Title>
-          <Card.Text>Invited: {meeting.leaderName}</Card.Text>
-          <Card.Text>Datetime: {meeting.dateTime}</Card.Text>
-          <Button
-            variant="primary"
-            value={meeting.meetingID}
-            onClick={props.meetingAction}
-          >
-            {props.actionName}
-          </Button>
-        </Card.Body>
-      </Card>
-    );
-  };
-  return <div>{props.meetings.map((meeting) => renderRow(meeting))}</div>;
-};
+const MENU_ITEMS = ["Invited", "Upcoming", "Past", "Others"];
+const ACTION_NAMES = ["Join", "View Detail", "Give Feedback", "View Detail"];
 
 export default function ViewMeetings() {
-  const [selectedMenu, setSelectedMenu] = React.useState(MENU_ITEMS[0]);
-
-  const [invitedMeetings, setInvitedMeetings] = React.useState([
-    { ...MEETING_TEMPLATE, groupName: "Invited" },
-  ]);
-  const [upcomingMeetings, setUpcomingMeetings] = React.useState([
-    { ...MEETING_TEMPLATE, groupName: "Upcoming" },
-  ]);
-  const [participatedMeetings, setParticipatedMeetings] = React.useState([
-    { ...MEETING_TEMPLATE, groupName: "Participated" },
-  ]);
-
-  const [allMeetings, setAllMeetings] = React.useState([
-    { ...MEETING_TEMPLATE, groupName: "All" },
-  ]);
-
-  const [meetingsToDisplay, setMeetingsToDisplay] = React.useState([]);
-  const [meetingAction, setMeetingAction] = React.useState();
-  const [actionName, setActionName] = React.useState(ACTION_NAMES[0]);
-
-  const handleChange = (eventKey) => {
-    setSelectedMenu(eventKey);
-  };
+  const [userID, setUserID] = React.useState();
+  const [invitedMeetings, setInvitedMeetings] = React.useState();
+  const [upcomingMeetings, setUpcomingMeetings] = React.useState();
+  const [participatedMeetings, setParticipatedMeetings] = React.useState();
+  const [allMeetings, setAllMeetings] = React.useState();
+  const [modalVisible, setModalVisible] = React.useState(false);
+  const [selectedMeetingID, setSelectedMeetingID] = React.useState();
 
   React.useEffect(() => {
-    switch (selectedMenu) {
-      case MENU_ITEMS[0]:
-        setMeetingsToDisplay(invitedMeetings);
-        setMeetingAction((event) => acceptInvitation);
-        setActionName(ACTION_NAMES[0]);
-        break;
-      case MENU_ITEMS[1]:
-        setMeetingsToDisplay(upcomingMeetings);
-        setMeetingAction((event) => goToDetailPage);
-        setActionName(ACTION_NAMES[1]);
-        break;
-      case MENU_ITEMS[2]:
-        setMeetingsToDisplay(participatedMeetings);
-        setMeetingAction((event) => goToFeedBackPage);
-        setActionName(ACTION_NAMES[2]);
-        break;
-      case MENU_ITEMS[3]:
-        setMeetingsToDisplay(allMeetings);
-        setMeetingAction((event) => goToDetailPage);
-        setActionName(ACTION_NAMES[3]);
-        break;
-    }
-  }, [selectedMenu]);
+    initStates();
+  }, []);
 
-  const acceptInvitation = (event) => {
+  const initStates = async () => {
+    const userIDFromLocalStorage = await loadAndSetUserID();
+    fetchMeetings(userIDFromLocalStorage);
+  };
+
+  const loadAndSetUserID = async () => {
+    const userIDFromLocalStorage = 0; //TODO change it to get real user ID
+    setUserID(userIDFromLocalStorage);
+    return userIDFromLocalStorage;
+  };
+
+  const fetchMeetings = async (userID) => {
+    const fetchedInvitedMeetings = await fetchInvitedMeetings(userID);
+    setInvitedMeetings(fetchedInvitedMeetings);
+    const fetchedUpcomingMeetings = await fetchUpcomingMeetings(userID);
+    setUpcomingMeetings(fetchedUpcomingMeetings);
+    const fetchedParticipatedMeetings = await fetchParticipatedMeetings(userID);
+    setParticipatedMeetings(fetchedParticipatedMeetings);
+    const fetchedAllMeetings = await fetchAllMeetings();
+    setAllMeetings(fetchedAllMeetings);
+    console.log("Loaded");
+  };
+
+  const openModal = (event) => {
+    setModalVisible(true);
+    setSelectedMeetingID(event.target.value);
+  };
+  const hideModal = () => {
+    setModalVisible(false);
+    setSelectedMeetingID();
+  };
+
+  const acceptInvitation = () => {
+    setModalVisible(false);
     console.log("accepted");
-    console.log(event.target.value);
+    console.log(selectedMeetingID);
+    initStates();
   };
   const goToDetailPage = () => {
     console.log("goToDetailPage");
@@ -96,18 +71,52 @@ export default function ViewMeetings() {
   };
 
   return (
-    <div>
+    <Container>
+      <Modal show={modalVisible} onHide={hideModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Will you join this nomikai?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={hideModal}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={acceptInvitation}>
+            Join
+          </Button>
+        </Modal.Footer>
+      </Modal>
       <h1>Meeting lists</h1>
-      <ItemSelector
-        handleChange={handleChange}
-        value={selectedMenu}
-        itemList={MENU_ITEMS}
-      />
-      <MeetingList
-        meetings={meetingsToDisplay}
-        meetingAction={meetingAction}
-        actionName={actionName}
-      />
-    </div>
+      <Tabs>
+        <Tab eventKey={MENU_ITEMS[0]} title={MENU_ITEMS[0]}>
+          <MeetingList
+            meetings={invitedMeetings}
+            meetingAction={openModal}
+            actionName={ACTION_NAMES[0]}
+          />
+        </Tab>
+        <Tab eventKey={MENU_ITEMS[1]} title={MENU_ITEMS[1]}>
+          <MeetingList
+            meetings={upcomingMeetings}
+            meetingAction={goToDetailPage}
+            actionName={ACTION_NAMES[1]}
+          />
+        </Tab>
+        <Tab eventKey={MENU_ITEMS[2]} title={MENU_ITEMS[2]}>
+          <MeetingList
+            meetings={participatedMeetings}
+            meetingAction={goToFeedBackPage}
+            actionName={ACTION_NAMES[2]}
+          />
+        </Tab>
+        <Tab eventKey={MENU_ITEMS[3]} title={MENU_ITEMS[3]}>
+          <MeetingList
+            meetings={allMeetings}
+            meetingAction={goToFeedBackPage}
+            actionName={ACTION_NAMES[3]}
+          />
+        </Tab>
+      </Tabs>
+    </Container>
   );
 }
