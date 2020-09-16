@@ -1,16 +1,15 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, IntegerField, TextField, Length, SubmitField
-from wtforms.validators import DataRequired, Email, EqualTo, ValidationError
-from ..models import Users
+from wtforms import StringField, IntegerField
+from wtforms.validators import DataRequired, Length
 
 
 class FeedbackForm(FlaskForm):
-    """Feedback form."""
+    class Meta:
+        csrf = False
+
     meeting_id = IntegerField('MeetingID', [
         DataRequired()])
     
-    review = TextField('Feedback', [
+    review = StringField('Feedback', [
         DataRequired(),
         Length(min=4, message=('Your message is too short.'))])
-    
-    # submit = SubmitField('Submit')
