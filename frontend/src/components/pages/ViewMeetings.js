@@ -1,6 +1,7 @@
 import React from "react";
 import { MeetingList } from "../organisms";
 import { Container, Tabs, Tab, Modal, Button } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 
 import {
   fetchInvitedMeetings,
@@ -13,6 +14,7 @@ const MENU_ITEMS = ["Invited", "Upcoming", "Past", "Others"];
 const ACTION_NAMES = ["Join", "View Detail", "Give Feedback", "View Detail"];
 
 export default function ViewMeetings() {
+  const history = useHistory();
   const [userID, setUserID] = React.useState();
   const [invitedMeetings, setInvitedMeetings] = React.useState();
   const [upcomingMeetings, setUpcomingMeetings] = React.useState();
@@ -66,8 +68,12 @@ export default function ViewMeetings() {
   const goToDetailPage = () => {
     console.log("goToDetailPage");
   };
-  const goToFeedBackPage = () => {
-    console.log("goToFeedBackPage");
+  const goToFeedBackPage = (event) => {
+    const meetingID = event.target.value;
+    const targetMeeting = participatedMeetings.find(
+      (meeting) => meeting.meetingID === meetingID
+    );
+    history.push("/meeting/feedback", { meeting: targetMeeting });
   };
 
   return (
