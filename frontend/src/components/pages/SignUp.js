@@ -15,7 +15,6 @@ function SignUpForm() {
   const onSubmit = (data) => handleSignup(data);
 
   const handleSignup = (data) => {
-    console.log(data);
     setMessage("");
 
     AuthService.signup(
