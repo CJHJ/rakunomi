@@ -14,6 +14,7 @@ import CreateMeeting from "./components/pages/CreateMeeting";
 import ViewMeetings from "./components/pages/ViewMeetings";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
+import Feedback from "./components/pages/Feedback";
 
 function App() {
   return (
@@ -22,6 +23,9 @@ function App() {
         <Header />
         <div id="main-content">
           <Switch>
+            <Route path="/meeting/feedback">
+              <Feedback />
+            </Route>
             <Route path="/meeting/create">
               {!AuthService.getCurrentUser() ? (
                 <Redirect to="/signin" />
