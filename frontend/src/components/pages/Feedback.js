@@ -3,7 +3,7 @@ import { Container, Button, Row, Col, Modal } from "react-bootstrap";
 import { Divider } from "@material-ui/core";
 import { FeedbackReviewTextForm, FeedbackRatingForm } from "../organisms";
 import { useLocation, useHistory } from "react-router-dom";
-import { sendFeedback } from "../../lib/api/feedback";
+import { sendFeedback } from "../../libs/api/feedback";
 
 const MESSAGE = `Our goal is to continue offering top-notch products at good prices, and your review could greatly help us to continue doing so.
 I really appreciate you taking out the time to help us improve our offerings!`;
