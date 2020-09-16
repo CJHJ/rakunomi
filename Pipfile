@@ -11,6 +11,8 @@ flask-sqlalchemy = "*"
 flask-migrate = "*"
 flask-restful = "*"
 flask-jwt-extended = "*"
+python-dotenv = "*"
+requests = "*"
 
 [requires]
 python_version = "3.7"
