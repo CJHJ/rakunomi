@@ -23,10 +23,18 @@ function App() {
         <div id="main-content">
           <Switch>
             <Route path="/meeting/create">
-              <CreateMeeting />
+              {!AuthService.getCurrentUser() ? (
+                <Redirect to="/signin" />
+              ) : (
+                <CreateMeeting />
+              )}
             </Route>
             <Route path="/meeting/view">
-              <ViewMeetings />
+              {!AuthService.getCurrentUser() ? (
+                <Redirect to="/signin" />
+              ) : (
+                <ViewMeetings />
+              )}
             </Route>
             <Route path="/signin">
               {AuthService.getCurrentUser() ? <Redirect to="/" /> : <SignIn />}
