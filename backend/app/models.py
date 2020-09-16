@@ -15,6 +15,7 @@ class Users(db.Model):
 
     def __repr__(self):
         return '<Users {}>'.format(self.username)
+
     """ The __repr__ method tells Python how to print objects of this class, which is going to be useful for debugging. """
 
     def set_password(self, password):
@@ -36,7 +37,9 @@ class Meetings(db.Model):
 
 
 class MU_Relationship(db.Model):
-    meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'), primary_key=True)
+    meeting_id = db.Column(db.Integer,
+                           db.ForeignKey('meetings.id'),
+                           primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     approved = db.Column(db.Boolean, nullable=False, default=False)
     review = db.Column(db.Text, nullable=False)
