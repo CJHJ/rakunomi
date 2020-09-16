@@ -14,6 +14,7 @@ flask-jwt-extended = "*"
 flask-wtf = "*"
 email-validator = "*"
 requests = "*"
+flask-cors = "*"
 
 [requires]
 python_version = "3.7"
