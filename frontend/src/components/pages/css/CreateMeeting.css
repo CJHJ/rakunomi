@@ -14,3 +14,26 @@ input {
   line-height: 0.5;
   padding: 5px;
 }
+
+#preset-items {
+  margin-top: 15px;
+}
+
+#preset-confirm-btn {
+  margin-left: 10px;
+}
+
+.item-label {
+  white-space: pre;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 200px;
+}
+
+.item-label:hover {
+  text-overflow: inherit;
+  overflow: visible;
+}
+
+.card label {
+}

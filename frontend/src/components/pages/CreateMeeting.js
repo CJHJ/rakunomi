@@ -8,9 +8,10 @@ import {
   Tabs,
   Tab,
   Modal,
+  Image,
   Button,
+  Carousel,
 } from "react-bootstrap";
-import axios from "axios";
 import DateTimePicker from "react-datetime-picker";
 
 import AuthService from "../../services/auth.service";
@@ -20,8 +21,6 @@ import "./css/CreateMeeting.css";
 
 export default function CreateMeeting() {
   const currentUser = AuthService.getCurrentUser();
-  const [participantLoading, setParticipantLoading] = useState(false);
-  const [participantMessage, setParticipantMessage] = useState("");
 
   const [dateTimeValue, onDateTimeChange] = useState(new Date());
   const [participantList, setParticipantList] = useState(
@@ -30,6 +29,8 @@ export default function CreateMeeting() {
 
   // Handlers
   // -- Participants
+  const [participantLoading, setParticipantLoading] = useState(false);
+  const [participantMessage, setParticipantMessage] = useState("");
   const [participantName, setParticipantName] = useState("");
   const handleAddParticipant = () => {
     setParticipantMessage("");
@@ -75,12 +76,52 @@ export default function CreateMeeting() {
     });
   };
 
+  // -- Wishlist related
+  const [wishlist, setWishlist] = useState(new Array());
+
+  // -- Preset
+  const [presetLoading, setPresetLoading] = useState();
+  const [presetMessage, setPresetMessage] = useState("");
+  const [preset, setPreset] = useState(new Array());
+  const getPresets = () => {
+    setPresetLoading(true);
+    MeetingService.getPresets(participantName).then(
+      (data) => {
+        setPreset((oldPreset) => {
+          console.log(data.preset);
+          return data.preset;
+        });
+        setPresetLoading(false);
+      },
+      (error) => {
+        console.log(error.response);
+        const resMessage =
+          (error.response && error.response.data && error.response.data.msg) ||
+          error.message ||
+          error.toString();
+
+        setPresetLoading(false);
+        setPresetMessage(resMessage);
+      }
+    );
+  };
+  const addPreset = () => {
+    setWishlist((oldWishlist) => {
+      console.log(oldWishlist);
+      return [...oldWishlist, ...preset];
+    });
+  };
+
+  // Run on mount
+  useEffect(() => {
+    getPresets();
+  }, []);
+
   return (
     <Container>
       <h1>Create Meeting</h1>
       <Form>
         <Card>
-          <h2>General info</h2>
           {/* Time schedule */}
           <Form.Group>
             <Form.Label>Time schedule</Form.Label>
@@ -146,6 +187,67 @@ export default function CreateMeeting() {
               </Col>
             </Row>
           </Form.Group>
+          {/* Select preset */}
+          <Form.Group>
+            <Form.Label>Presets</Form.Label>
+            {!presetLoading && (
+              <Button variant="success" onClick={getPresets}>
+                Refresh
+              </Button>
+            )}
+            {!presetLoading && (
+              <Button
+                id="preset-confirm-btn"
+                variant="info"
+                onClick={addPreset}
+              >
+                Add to Wishlist
+              </Button>
+            )}
+            {presetLoading && (
+              <span className="spinner-border spinner-border-sm"></span>
+            )}
+            <div>
+              {presetMessage && (
+                <div className="alert alert-danger" role="alert">
+                  {presetMessage}
+                </div>
+              )}
+            </div>
+            <Row id="preset-items">
+              {preset.map((item, presetIndex) => {
+                return (
+                  <Col key={presetIndex}>
+                    <Card>
+                      <Carousel>
+                        {item.image_URLs.map((imageUrl, imageIndex) => {
+                          return (
+                            <Carousel.Item key={imageIndex}>
+                              <img
+                                className="d-block"
+                                src={imageUrl.imageUrl}
+                                alt="First slide"
+                              />
+                            </Carousel.Item>
+                          );
+                        })}
+                      </Carousel>
+                      <label className="item-label">{item.item_name}</label>
+                      <label className="item-price">
+                        {"Price: " + item.price + "円"}
+                      </label>
+                      <label className="item-review">
+                        {"Review: " +
+                          (item.review != "0" ? item.review : "N/A")}
+                      </label>
+                    </Card>
+                  </Col>
+                );
+              })}
+            </Row>
+          </Form.Group>
+          {/* Wishlist */}
+          <label>{wishlist.length}</label>
         </Card>
       </Form>
     </Container>
