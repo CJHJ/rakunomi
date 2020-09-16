@@ -6,6 +6,7 @@ from ..models import Users
 
 
 class LoginForm(FlaskForm):
+
     class Meta:
         csrf = False
 
@@ -14,6 +15,7 @@ class LoginForm(FlaskForm):
 
 
 class RegistrationForm(FlaskForm):
+
     class Meta:
         csrf = False
 

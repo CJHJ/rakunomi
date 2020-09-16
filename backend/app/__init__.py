@@ -19,6 +19,8 @@ migrate.init_app(app, db)
 
 jwt = JWTManager(app)
 blacklist = set()
+
+
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
