@@ -1,10 +1,7 @@
 # Welcome to Rakunomi!
 
-
 ## For backend
-Before running the server, please make `.env` file that has a secret ID for Rakuten API 
-
-```bash
-cp .env.sample .env
+Before run the server, run below.
 ```
-and replace the variable.
+export  RAKUTEN_API_APPLICATION_ID=<xxxxxxxx>
+```
