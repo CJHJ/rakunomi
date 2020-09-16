@@ -1,0 +1,43 @@
+#signin-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: #fff;
+  padding: 20px;
+  margin: 25px auto 0;
+  box-shadow: 0 0 0.5em #222;
+  border-radius: 2px;
+}
+
+#signin-form div {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+#signin-form div > * {
+  padding-bottom: 10px;
+}
+
+#signin-form div label {
+  flex: 1;
+  margin-right: 10px;
+  padding-bottom: 0;
+  text-align: right;
+  vertical-align: middle;
+  display: inline-block;
+  min-width: 150px;
+}
+
+#signin-form div input {
+  flex: 2;
+  display: block;
+  box-sizing: border-box;
+  outline: none;
+  margin: 0;
+  background: #fff;
+  border: 1px solid #dbdbdb;
+  padding: 0.5em 0.5em;
+  border-radius: 2px;
+  min-width: 250px;
+}
