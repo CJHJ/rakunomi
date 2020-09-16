@@ -1,6 +1,12 @@
 import axios from "axios";
 import { API_SIGNUP_URL, API_SIGNIN_URL } from "../constants";
 
+const saveSession = (response) => {
+  if (response.data.data.token) {
+    localStorage.setItem("user", JSON.stringify(response.data.data));
+  }
+};
+
 const signup = (username, email, password, rakutenId, zoomId) => {
   var signupFormData = new FormData();
 
@@ -16,9 +22,7 @@ const signup = (username, email, password, rakutenId, zoomId) => {
     data: signupFormData,
     headers: { "Content-Type": "multipart/form-data" },
   }).then((response) => {
-    if (response.data) {
-      localStorage.setItem("user", JSON.stringify(response.data));
-    }
+    saveSession(response);
 
     return response.data;
   });
@@ -36,9 +40,7 @@ const login = (username, password) => {
     data: loginFormData,
     headers: { "Content-Type": "multipart/form-data" },
   }).then((response) => {
-    if (response.data) {
-      localStorage.setItem("user", JSON.stringify(response.data));
-    }
+    saveSession(response);
 
     return response.data;
   });
