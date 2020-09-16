@@ -15,6 +15,12 @@ const signup = (username, email, password, rakutenId, zoomId) => {
     url: API_SIGNUP_URL,
     data: signupFormData,
     headers: { "Content-Type": "multipart/form-data" },
+  }).then((response) => {
+    if (response.data) {
+      localStorage.setItem("user", JSON.stringify(response.data));
+    }
+
+    return response.data;
   });
 };
 
