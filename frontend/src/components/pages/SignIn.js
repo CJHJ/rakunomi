@@ -1,13 +1,43 @@
-import React, { Component } from "react";
+import React, { Component, useState, useRef } from "react";
 import { useForm } from "react-hook-form";
+
+import AuthService from "../../services/auth.service";
 
 import "./css/SignIn.css";
 
-function SignInForm() {
+const SignInForm = (props) => {
   const { register, handleSubmit, errors, formState } = useForm({
     mode: "onBlur",
   });
-  const onSubmit = (data) => console.log(data);
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const onSubmit = (data) => {
+    handleLogin(data);
+  };
+
+  const handleLogin = (data) => {
+    setMessage("");
+    setLoading(true);
+
+    AuthService.login(data.username, data.password).then(
+      () => {
+        props.history.push("/Home");
+        window.location.reload();
+      },
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+
+        setLoading(false);
+        setMessage(resMessage);
+      }
+    );
+  };
 
   return (
     <form id="signin-form" onSubmit={handleSubmit(onSubmit)}>
@@ -43,10 +73,24 @@ function SignInForm() {
         <input type="checkbox" />
         <label for="rememberMe">Remember me?</label>
       </div>
-      <input type="submit" value="Login" disabled={formState.isSubmitting} />
+      <div>
+        {loading && <span className="spinner-border spinner-border-sm"></span>}
+        <input
+          type="submit"
+          value="Login"
+          disabled={formState.isSubmitting || loading}
+        />
+      </div>
+      <div>
+        {message && (
+          <div className="alert alert-danger" role="alert">
+            {message}
+          </div>
+        )}
+      </div>
     </form>
   );
-}
+};
 
 export default class SignIn extends Component {
   render() {
