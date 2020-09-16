@@ -1,4 +1,4 @@
-import React, { Component, useState, useRef } from "react";
+import React, { Component, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AuthService from "../../services/auth.service";
