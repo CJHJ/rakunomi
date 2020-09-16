@@ -68,7 +68,9 @@ def register():
         expires = datetime.timedelta(days=app.config['EXPIRE_DAYS'])
         ret = {'msg': 'Sign up succeed!',
                'data':{
-                   'token': create_access_token(identity=user.id, expires_delta=expires)
+                    'token': create_access_token(identity=user.id, expires_delta=expires),
+                    'user_id': user.id,
+                    'user_name': user.username
                }}
         return jsonify(ret), 200
     return jsonify({"msg": form.errors}), 401
