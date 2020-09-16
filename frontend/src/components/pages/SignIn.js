@@ -22,7 +22,7 @@ const SignInForm = (props) => {
 
     AuthService.login(data.username, data.password).then(
       () => {
-        props.history.push("/Home");
+        props.history.push("/");
         window.location.reload();
       },
       (error) => {
