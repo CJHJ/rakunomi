@@ -1,5 +1,4 @@
-from ..rakuten import bp
-from .. import blacklist
+from . import bp
 from flask import jsonify, request, abort
 import requests
 import random

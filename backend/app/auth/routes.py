@@ -1,7 +1,6 @@
-from ..auth import bp
-from .. import db
-from .. import blacklist
-from flask import jsonify, request
+from . import bp
+from .. import db, blacklist
+from flask import jsonify, request, current_app as app
 from flask_jwt_extended import jwt_required, create_access_token, get_raw_jwt, get_jwt_identity
 from .forms import LoginForm, RegistrationForm
 from ..models import Users
@@ -30,7 +29,7 @@ def login():
                 "msg": "Bad username or password",
                 'data': ""
             }), 401
-        expires = datetime.timedelta(days=7)
+        expires = datetime.timedelta(days=app.config['EXPIRE_DAYS'])
         ret = {
             'mgs': 'Success',
             'data': {
@@ -66,9 +65,10 @@ def register():
         user.set_password(form.password.data)
         db.session.add(user)
         db.session.commit()
+        expires = datetime.timedelta(days=app.config['EXPIRE_DAYS'])
         ret = {'msg': 'Sign up succeed!',
                'data':{
-                   'token': create_access_token(identity=user.id)
+                   'token': create_access_token(identity=user.id, expires_delta=expires)
                }}
         return jsonify(ret), 200
     return jsonify({"msg": form.errors}), 401
@@ -132,7 +132,7 @@ def delete_user(username):
         return jsonify({"msg": "Failed to delete this user"}), 401
     db.session.delete(user)
     db.session.commit()
-    ret = {"msg": "Delete succeed!"}
+    ret = {"msg": "Success"}
     return jsonify(ret), 200
 
 
@@ -149,6 +149,5 @@ def update_user(username):
         user.rakuten_id = form.rakuten_id.data
         user.zoom_id = form.zoom_id.data
         user.set_password(form.password.data)
-        ret = {"msg": "Update succeed!"}
-        return jsonify(ret), 200
+        return jsonify({"msg": "Suucess"}), 200
     return jsonify({"msg": form.errors}), 401
