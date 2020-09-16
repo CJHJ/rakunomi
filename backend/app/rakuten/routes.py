@@ -11,14 +11,19 @@ API_ENDPOINT = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/201707
 KEYWORD_PREFIX = "&keyword="
 
 SEARCH_KEYWORDS_FOR_PRESET = [
-    ["ワイン",  'ビール', '日本酒', '焼酎', '果実酒'],  # Drinks
-    ["ピザ", ' ラーメン', 'ハンバーガー', 'お茶漬け', ],  # Main foods
+    ["ワイン", 'ビール', '日本酒', '焼酎', '果実酒'],  # Drinks
+    [
+        "ピザ",
+        ' ラーメン',
+        'ハンバーガー',
+        'お茶漬け',
+    ],  # Main foods
     ['枝豆', '唐揚げ', '刺身', '生ハム', 'ソーセージ'],  # Side foods
     ["コールスローサラダ", 'シーザーサラダ', 'ポテトサラダ', '和風サラダ'],  # Salads
 ]
 
 
-@ bp.route('/preset', methods=['GET'])
+@bp.route('/preset', methods=['GET'])
 def make_preset():
     """
     Returns
@@ -43,12 +48,10 @@ def make_preset():
         preset.extend(item)
         time.sleep(0.1)
 
-    return jsonify({
-        'preset': preset
-    }), 200
+    return jsonify({'preset': preset}), 200
 
 
-@ bp.route('/recommended', methods=['GET'])
+@bp.route('/recommended', methods=['GET'])
 def make_recommended():
     """
     params: keyword = < keyword for items>
@@ -75,12 +78,10 @@ def make_recommended():
         recommended.extend(items)
         time.sleep(0.1)
 
-    return jsonify({
-        'item': recommended
-    }), 200
+    return jsonify({'item': recommended}), 200
 
 
-@ bp.route('/search/items', methods=['GET'])
+@bp.route('/search/items', methods=['GET'])
 def search_with_keyword():
     """
     Returns
@@ -104,17 +105,13 @@ def search_with_keyword():
 
     fetched_items = call_rakuten_search_API_with_keyword(keyword)
     if len(fetched_items) == 0:
-        return jsonify({
-            'items': []
-        })
+        return jsonify({'items': []})
 
     for fetched_item in fetched_items:
         item = extract_item_attribute(fetched_item['Item'])
         items.append(item)
 
-    return jsonify({
-        'items': items
-    }), 200
+    return jsonify({'items': items}), 200
 
 
 def generate_keywords_for_preset(num_items_per_genre=[2, 1, 2, 1]):
@@ -129,8 +126,8 @@ def generate_keywords_for_preset(num_items_per_genre=[2, 1, 2, 1]):
     """
     res = []
     for i in range(len(SEARCH_KEYWORDS_FOR_PRESET)):
-        keywords = random.sample(
-            SEARCH_KEYWORDS_FOR_PRESET[i], num_items_per_genre[i])
+        keywords = random.sample(SEARCH_KEYWORDS_FOR_PRESET[i],
+                                 num_items_per_genre[i])
         res.extend(keywords)
     return res
 
