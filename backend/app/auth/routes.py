@@ -13,15 +13,16 @@ def login():
     Login function
     :return:
     {
-        "msg": Success
+        "msg": "Success"
         "token": "sdfdfasdfadsf"
     }
     """
-    form = LoginForm(request.form, csrf_enabled=False)
+    form = LoginForm(request.form)
     if form.validate():
         user = Users.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            return jsonify({"msg": "Bad username or password", 'token': ""}), 401
+            return jsonify({"msg": "Bad username or password",
+                            'token': ""}), 401
         ret = {
             'mgs': 'Success',
             'token': create_access_token(identity=form.username.data)
@@ -32,7 +33,15 @@ def login():
 
 @bp.route('/sign_up', methods=['POST'])
 def register():
-    form = RegistrationForm(request.form, csrf_enabled=False)
+    """
+    register function
+    :return:
+    {
+        "msg": "Success"
+        "token": "sdfdfasdfadsf"
+    }
+    """
+    form = RegistrationForm(request.form)
     if form.validate():
         user = Users(username=form.username.data, email=form.email.data,
                      rakuten_id=form.rakuten_id.data, zoom_id=form.zoom_id.data)
@@ -40,7 +49,8 @@ def register():
         db.session.add(user)
         db.session.commit()
         ret = {
-            'access_token': create_access_token(identity=form.username.data)
+            "msg": "Sign up successed",
+            'token': create_access_token(identity=form.username.data)
         }
         return jsonify(ret), 200
     return jsonify({"msg": form.errors, 'token': ""}), 401
@@ -49,6 +59,14 @@ def register():
 @bp.route('/sign_out', methods=['GET'])
 @jwt_required
 def logout():
+    """
+       register function
+       :return:
+       {
+           "msg": "Success"
+       }
+       """
     jti = get_raw_jwt()['jti']
     blacklist.add(jti)
-    return jsonify({"msg": "Successfully logged out"}), 200
+    return jsonify({"msg": "Success"}), 200
+
