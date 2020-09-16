@@ -1,5 +1,8 @@
-import React, { Component } from "react";
+import React, { Component, useState } from "react";
 import { useForm } from "react-hook-form";
+
+import AuthService from "../../services/auth.service";
+import history from "../../history";
 
 import "./css/SignUp.css";
 
@@ -7,7 +10,41 @@ function SignUpForm() {
   const { register, handleSubmit, errors, formState } = useForm({
     mode: "onBlur",
   });
-  const onSubmit = (data) => console.log(data);
+  const [successful, setSuccessful] = useState(false);
+  const [message, setMessage] = useState("");
+
+  const onSubmit = (data) => handleSignup(data);
+
+  const handleSignup = (data) => {
+    setMessage("");
+
+    AuthService.signup(
+      data.username,
+      data.email,
+      data.password,
+      data.rakutenId,
+      data.zoomId
+    ).then(
+      (response) => {
+        setMessage(response.msg);
+        setSuccessful(true);
+
+        history.push("/Home");
+        window.location.reload();
+      },
+      (error) => {
+        const resMessage =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+
+        setMessage(resMessage);
+        setSuccessful(false);
+      }
+    );
+  };
 
   return (
     <form id="signup-form" onSubmit={handleSubmit(onSubmit)}>
@@ -96,6 +133,18 @@ function SignUpForm() {
         />
       </div>
       <input type="submit" disabled={formState.isSubmitting} />
+      {message && (
+        <div className="form-group">
+          <div
+            className={
+              successful ? "alert alert-success" : "alert alert-danger"
+            }
+            role="alert"
+          >
+            {message}
+          </div>
+        </div>
+      )}
     </form>
   );
 }
