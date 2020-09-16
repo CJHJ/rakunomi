@@ -2,11 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from config import Config
-from .models import identity, authenticate
-from flask_jwt_extended import (
-    JWTManager, jwt_required, create_access_token,
-    get_jwt_identity
-)
+from flask_jwt_extended import JWTManager
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -25,9 +21,14 @@ def check_if_token_in_blacklist(decrypted_token):
     jti = decrypted_token['jti']
     return jti in blacklist
 
+
 # blueprint
 from app.auth import bp as auth_bp
+from app.rakuten import bp as rakuten_bp
 app.register_blueprint(auth_bp)
+app.register_blueprint(rakuten_bp)
 
 if __name__ == '__main__':
     app.run()
+
+from . import models

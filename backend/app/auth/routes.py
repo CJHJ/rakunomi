@@ -1,7 +1,9 @@
 from ..auth import bp
+from .. import db
 from .. import blacklist
 from flask import jsonify, request
-from flask_jwt_extended import jwt_required, get_jwt_identity,create_access_token, get_raw_jwt
+from flask_jwt_extended import jwt_required, create_access_token, get_raw_jwt
+# from ..models import Users
 
 
 @bp.route('/sign_in', methods=['POST'])
@@ -18,7 +20,15 @@ def login():
 
 @bp.route('/sign_up', methods=['GET'])
 def register():
-    return 200
+    # user = Users(username=request.form['username'],
+    #             email=request.form['email'])
+    # db.session.add(user)
+    # db.session.commit()
+    ret = {
+        "msg": "Successful registered"
+    }
+    return jsonify(ret), 200
+
 
 
 @bp.route('/sign_out', methods=['GET'])
