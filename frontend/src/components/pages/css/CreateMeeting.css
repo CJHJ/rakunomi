@@ -9,3 +9,8 @@
 input {
   margin-bottom: 10px;
 }
+
+.delete-user-button {
+  line-height: 0.5;
+  padding: 5px;
+}
