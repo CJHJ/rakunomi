@@ -8,7 +8,9 @@ class Users(db.Model):
     password = db.Column(db.String(128))
     zoom_id = db.Column(db.String(32))
     rakuten_id = db.Column(db.String(32))
-    allergies = db.Column(['egg', 'fish', 'fruit', 'garlic', 'rice', 'soy'])
+    # allergies = db.Column(['egg', 'fish', 'fruit', 'garlic', 'rice', 'soy'])
+    allergies = db.Column(db.String(128))
+    email = db.Column(db.String(64))
 
     def __repr__(self):
         return '<Users {}>'.format(self.username)
