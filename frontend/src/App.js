@@ -1,8 +1,11 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Router, Switch, Route, Redirect } from "react-router-dom";
+import history from "./history";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
+
+import AuthService from "./services/auth.service";
 
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -15,7 +18,7 @@ import Feedback from "./components/pages/Feedback";
 
 function App() {
   return (
-    <Router>
+    <Router history={history}>
       <div id="main-container">
         <Header />
         <div id="main-content">
@@ -24,16 +27,24 @@ function App() {
               <Feedback />
             </Route>
             <Route path="/meeting/create">
-              <CreateMeeting />
+              {!AuthService.getCurrentUser() ? (
+                <Redirect to="/signin" />
+              ) : (
+                <CreateMeeting />
+              )}
             </Route>
             <Route path="/meeting/view">
-              <ViewMeetings />
+              {!AuthService.getCurrentUser() ? (
+                <Redirect to="/signin" />
+              ) : (
+                <ViewMeetings />
+              )}
             </Route>
             <Route path="/signin">
-              <SignIn />
+              {AuthService.getCurrentUser() ? <Redirect to="/" /> : <SignIn />}
             </Route>
             <Route path="/signup">
-              <SignUp />
+              {AuthService.getCurrentUser() ? <Redirect to="/" /> : <SignUp />}
             </Route>
             <Route path="/">
               <Home />

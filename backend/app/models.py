@@ -9,20 +9,38 @@ class Users(db.Model):
     password_hash = db.Column(db.String(128))
     zoom_id = db.Column(db.String(32))
     rakuten_id = db.Column(db.String(32))
-    # allergies = db.Column(['egg', 'fish', 'fruit', 'garlic', 'rice', 'soy'])
     allergies = db.Column(db.String(128))
     email = db.Column(db.String(64))
 
     def __repr__(self):
         return '<Users {}>'.format(self.username)
 
-    """ The __repr__ method tells Python how to print objects of this class, which is going to be useful for debugging. """
-
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def confirmed_meetings(self):
+        meetings = Meetings.query.join(
+            MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
+            MU_Relationship.user_id == self.id, MU_Relationship.approved == True)
+        return meetings.query.filter(Meetings.datetime > datetime.utcnow())\
+            .order_by(Meetings.datetime.desc())
+
+    def invited_meetings(self):
+        meetings = Meetings.query.join(
+            MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
+            MU_Relationship.user_id == self.id, MU_Relationship.approved==False)
+        return meetings.query.filter(Meetings.datetime > datetime.utcnow())\
+            .order_by(Meetings.datetime.desc())
+
+    def past_meetings(self):
+        meetings = Meetings.query.join(
+            MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
+            MU_Relationship.user_id == self.id)
+        return meetings.query.filter(Meetings.datetime < datetime.utcnow())\
+            .order_by(Meetings.datetime.desc())
 
 
 class Meetings(db.Model):
