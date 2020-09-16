@@ -2,12 +2,12 @@ import React from "react";
 import { MeetingList } from "../organisms";
 import { Container, Tabs, Tab, Modal, Button } from "react-bootstrap";
 
-import {
-  fetchInvitedMeetings,
-  fetchUpcomingMeetings,
-  fetchParticipatedMeetings,
-  fetchAllMeetings,
-} from "../../lib/api/meetings";
+// import {
+//   fetchInvitedMeetings,
+//   fetchUpcomingMeetings,
+//   fetchParticipatedMeetings,
+//   fetchAllMeetings,
+// } from "../../lib/api/meetings";
 
 const MENU_ITEMS = ["Invited", "Upcoming", "Past", "Others"];
 const ACTION_NAMES = ["Join", "View Detail", "Give Feedback", "View Detail"];
@@ -37,15 +37,15 @@ export default function ViewMeetings() {
   };
 
   const fetchMeetings = async (userID) => {
-    const fetchedInvitedMeetings = await fetchInvitedMeetings(userID);
-    setInvitedMeetings(fetchedInvitedMeetings);
-    const fetchedUpcomingMeetings = await fetchUpcomingMeetings(userID);
-    setUpcomingMeetings(fetchedUpcomingMeetings);
-    const fetchedParticipatedMeetings = await fetchParticipatedMeetings(userID);
-    setParticipatedMeetings(fetchedParticipatedMeetings);
-    const fetchedAllMeetings = await fetchAllMeetings();
-    setAllMeetings(fetchedAllMeetings);
-    console.log("Loaded");
+    // const fetchedInvitedMeetings = await fetchInvitedMeetings(userID);
+    // setInvitedMeetings(fetchedInvitedMeetings);
+    // const fetchedUpcomingMeetings = await fetchUpcomingMeetings(userID);
+    // setUpcomingMeetings(fetchedUpcomingMeetings);
+    // const fetchedParticipatedMeetings = await fetchParticipatedMeetings(userID);
+    // setParticipatedMeetings(fetchedParticipatedMeetings);
+    // const fetchedAllMeetings = await fetchAllMeetings();
+    // setAllMeetings(fetchedAllMeetings);
+    // console.log("Loaded");
   };
 
   const openModal = (event) => {
