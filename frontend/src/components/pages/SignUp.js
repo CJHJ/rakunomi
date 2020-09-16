@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AuthService from "../../services/auth.service";
+import history from "../../history";
 
 import "./css/SignUp.css";
 
@@ -25,8 +26,11 @@ function SignUpForm() {
       data.zoomId
     ).then(
       (response) => {
-        setMessage(response.data.message);
+        setMessage(response.msg);
         setSuccessful(true);
+
+        history.push("/Home");
+        window.location.reload();
       },
       (error) => {
         const resMessage =
