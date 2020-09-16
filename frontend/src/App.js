@@ -1,5 +1,6 @@
 import React from "react";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
+import { Router, Switch, Route } from "react-router-dom";
+import history from "./history";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./App.css";
@@ -14,7 +15,7 @@ import SignUp from "./components/pages/SignUp";
 
 function App() {
   return (
-    <Router>
+    <Router history={history}>
       <div id="main-container">
         <Header />
         <div id="main-content">

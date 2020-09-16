@@ -12,18 +12,23 @@ const signup = (username, email, password, rakutenId, zoomId) => {
 };
 
 const login = (username, password) => {
-  return axios
-    .post(API_SIGNIN_URL, {
-      username,
-      password,
-    })
-    .then((response) => {
-      if (response.data.accessToken) {
-        localStorage.setItem("user", JSON.stringify(response.data));
-      }
+  var loginFormData = new FormData();
 
-      return response.data;
-    });
+  loginFormData.append("username", username);
+  loginFormData.append("password", password);
+
+  return axios({
+    method: "post",
+    url: API_SIGNIN_URL,
+    data: loginFormData,
+    headers: { "Content-Type": "multipart/form-data" },
+  }).then((response) => {
+    if (response.data.token) {
+      localStorage.setItem("user", JSON.stringify(response.data.token));
+    }
+
+    return response.data;
+  });
 };
 
 const logout = () => {

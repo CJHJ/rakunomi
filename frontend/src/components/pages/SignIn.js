@@ -2,6 +2,7 @@ import React, { Component, useState } from "react";
 import { useForm } from "react-hook-form";
 
 import AuthService from "../../services/auth.service";
+import history from "../../history";
 
 import "./css/SignIn.css";
 
@@ -22,7 +23,7 @@ const SignInForm = (props) => {
 
     AuthService.login(data.username, data.password).then(
       () => {
-        props.history.push("/");
+        history.push("/Home");
         window.location.reload();
       },
       (error) => {
@@ -97,7 +98,7 @@ export default class SignIn extends Component {
     return (
       <div>
         <h1>Sign In</h1>
-        <SignInForm />
+        <SignInForm history={this.props.history} />
       </div>
     );
   }
