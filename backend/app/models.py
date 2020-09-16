@@ -21,25 +21,25 @@ class Users(db.Model):
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
-    def confirmed_meetings(self):
+    def get_confirmed_meetings(self):
         meetings = Meetings.query.join(
             MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
             MU_Relationship.user_id == self.id, MU_Relationship.approved == True)
-        return meetings.query.filter(Meetings.datetime > datetime.utcnow())\
+        return meetings.filter(Meetings.datetime > datetime.utcnow())\
             .order_by(Meetings.datetime.desc())
 
-    def invited_meetings(self):
+    def get_invited_meetings(self):
         meetings = Meetings.query.join(
             MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
             MU_Relationship.user_id == self.id, MU_Relationship.approved==False)
-        return meetings.query.filter(Meetings.datetime > datetime.utcnow())\
+        return meetings.filter(Meetings.datetime > datetime.utcnow())\
             .order_by(Meetings.datetime.desc())
 
-    def past_meetings(self):
+    def get_past_meetings(self):
         meetings = Meetings.query.join(
             MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
             MU_Relationship.user_id == self.id)
-        return meetings.query.filter(Meetings.datetime < datetime.utcnow())\
+        return meetings.filter(Meetings.datetime < datetime.utcnow())\
             .order_by(Meetings.datetime.desc())
 
 
@@ -53,6 +53,8 @@ class Meetings(db.Model):
     def __repr__(self):
         return '<Meeting {}>'.format(self.name)
 
+    def get_wishlist_items(self):
+        return Items.query.filter(Items.meeting_id == self.id)
 
 class MU_Relationship(db.Model):
     meeting_id = db.Column(db.Integer,
@@ -71,6 +73,7 @@ class Items(db.Model):
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
     product_id = db.Column(db.String(64), index=True, unique=True)
     amount = db.Column(db.Integer)
+    # price means total price
     price = db.Column(db.Integer)
 
     def __repr__(self):
