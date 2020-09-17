@@ -4,7 +4,6 @@ from wtforms.validators import DataRequired, Length
 
 
 class FeedbackForm(FlaskForm):
-
     class Meta:
         csrf = False
 
