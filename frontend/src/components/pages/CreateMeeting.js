@@ -105,6 +105,14 @@ export default function CreateMeeting() {
       return wishlist.reduce((a, b) => +a + +b.price, 0);
     });
   };
+  const deleteItem = (e) => {
+    const index = e.currentTarget.dataset.index;
+
+    setWishlist((tempWishlist) => {
+      tempWishlist.splice(index, 1);
+      return [...tempWishlist];
+    });
+  };
 
   // -- Preset
   const [presetLoading, setPresetLoading] = useState();
@@ -442,7 +450,7 @@ export default function CreateMeeting() {
 
             {isWishlistShown && (
               <Slider {...sliderSettings}>
-                {wishlist.map((item, presetIndex) => {
+                {wishlist.map((item, index) => {
                   return (
                     <div>
                       <Card className="wishlist-card">
@@ -460,6 +468,14 @@ export default function CreateMeeting() {
                           {"Review: " +
                             (item.review != "0" ? item.review : "N/A")}
                         </div>
+                        <Button
+                          className="delete-user-button"
+                          variant="danger"
+                          data-index={index}
+                          onClick={deleteItem}
+                        >
+                          -
+                        </Button>
                       </Card>
                     </div>
                   );
