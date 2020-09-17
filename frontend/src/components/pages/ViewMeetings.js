@@ -47,7 +47,6 @@ export default function ViewMeetings() {
     setParticipatedMeetings(fetchedParticipatedMeetings);
     const fetchedAllMeetings = await fetchAllMeetings();
     setAllMeetings(fetchedAllMeetings);
-    console.log("Loaded");
   };
 
   const openModal = (event) => {
