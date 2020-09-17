@@ -11,8 +11,5 @@ class Config(object):
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-    #
-    PER_PAGE = 5
-
     # Flask_cors
     CORS_HEADERS = 'Content-Type'
