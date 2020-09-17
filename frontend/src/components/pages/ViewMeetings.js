@@ -70,9 +70,9 @@ export default function ViewMeetings() {
     console.log("goToDetailPage");
   };
   const goToFeedBackPage = (event) => {
-    const meetingID = event.target.value;
+    const meeting_id = event.target.value;
     const targetMeeting = participatedMeetings.find(
-      (meeting) => meeting.meetingID === meetingID
+      (meeting) => meeting.meeting_id === meeting_id
     );
     history.push("/meeting/feedback", { meeting: targetMeeting });
   };
