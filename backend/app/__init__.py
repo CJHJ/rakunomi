@@ -5,7 +5,6 @@ from flask_cors import CORS
 from config import Config
 from flask_jwt_extended import JWTManager
 
-
 app = Flask(__name__)
 app.config.from_object(Config)
 
@@ -32,7 +31,6 @@ from app.meeting import bp as meeting_bp
 app.register_blueprint(auth_bp)
 app.register_blueprint(rakuten_bp)
 app.register_blueprint(meeting_bp)
-
 
 if __name__ == '__main__':
     app.run()
