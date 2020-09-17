@@ -24,19 +24,19 @@ def create_feedback():
 @app.route('/api/wishlist', methods=['GET'])
 @jwt_required
 def get_wishlist():
-    meeing_id = request.args.get('meeting_id', type=int)
-    meeing = Meetings.query.get(meeing_id)
-    if not meeing:
+    meeting_id = request.args.get('meeting_id', type=int)
+    meeting = Meetings.query.get(meeting_id)
+    if not meeting:
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
-    items = meeing.get_wishlist_items.all()
+    items = meeting.get_wishlist_items.all()
     ret = {
         'msg':
             'Success',
         'data': [{
-            'item id': it.id,
-            'product id': it.product_id,
+            'item_id': it.id,
+            'product_id': it.product_id,
             'amount': it.amount,
-            'total price': it.price
+            'total_price': it.price
         } for it in items]
     }
     return jsonify(ret), 200
