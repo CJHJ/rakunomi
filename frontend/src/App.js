@@ -12,6 +12,7 @@ import Footer from "./components/Footer";
 import Home from "./components/pages/Home";
 import CreateMeeting from "./components/pages/CreateMeeting";
 import ViewMeetings from "./components/pages/ViewMeetings";
+import ViewMeeting from "./components/pages/ViewMeeting";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
 import Feedback from "./components/pages/Feedback";
@@ -31,6 +32,13 @@ function App() {
                 <Redirect to="/signin" />
               ) : (
                 <CreateMeeting />
+              )}
+            </Route>
+            <Route path="/meeting/view">
+              {!AuthService.getCurrentUser() ? (
+                <Redirect to="/signin" />
+              ) : (
+                <ViewMeeting />
               )}
             </Route>
             <Route path="/meetings">
