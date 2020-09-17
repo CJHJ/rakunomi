@@ -40,6 +40,8 @@ function App() {
                 <Redirect to="/signin" />
               ) : (
                 <ViewMeeting />
+              )}
+            </Route>
             <Route path="/meeting/edit">
               {!AuthService.getCurrentUser() ? (
                 <Redirect to="/signin" />
