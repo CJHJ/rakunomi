@@ -2,6 +2,7 @@ import React from "react";
 import { MeetingList } from "../organisms";
 import { Container, Tabs, Tab, Modal, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
+import AuthService from "../../services/auth.service";
 
 import {
   fetchInvitedMeetings,
@@ -11,93 +12,72 @@ import {
 } from "../../libs/api/meetings";
 
 const MENU_ITEMS = ["Invited", "Upcoming", "Past", "Others"];
-const ACTION_NAMES = ["Join", "View Detail", "Give Feedback", "View Detail"];
+const ACTION_NAMES = [
+  "Check the Detail",
+  "View Detail",
+  "Give Feedback",
+  "View Detail",
+];
 
 export default function ViewMeetings() {
   const history = useHistory();
-  const [userID, setUserID] = React.useState();
+  const [user, setUser] = React.useState();
   const [invitedMeetings, setInvitedMeetings] = React.useState();
   const [upcomingMeetings, setUpcomingMeetings] = React.useState();
   const [participatedMeetings, setParticipatedMeetings] = React.useState();
   const [allMeetings, setAllMeetings] = React.useState();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedMeetingID, setSelectedMeetingID] = React.useState();
 
   React.useEffect(() => {
-    initStates();
+    loadAndSetUserID();
   }, []);
 
-  const initStates = async () => {
-    const userIDFromLocalStorage = await loadAndSetUserID();
-    fetchMeetings(userIDFromLocalStorage);
-  };
-
   const loadAndSetUserID = async () => {
-    const userIDFromLocalStorage = 0; //TODO change it to get real user ID
-    setUserID(userIDFromLocalStorage);
-    return userIDFromLocalStorage;
+    const userFromLocalStorage = AuthService.getCurrentUser();
+    setUser(userFromLocalStorage);
   };
 
-  const fetchMeetings = async (userID) => {
-    const fetchedInvitedMeetings = await fetchInvitedMeetings(userID);
+  React.useEffect(() => {
+    if (user && user.user_id) {
+      fetchMeetings(user.user_id);
+    }
+  }, [user]);
+
+  const fetchMeetings = async (user_id) => {
+    const fetchedInvitedMeetings = await fetchInvitedMeetings(user_id);
     setInvitedMeetings(fetchedInvitedMeetings);
-    const fetchedUpcomingMeetings = await fetchUpcomingMeetings(userID);
+    const fetchedUpcomingMeetings = await fetchUpcomingMeetings(user_id);
     setUpcomingMeetings(fetchedUpcomingMeetings);
-    const fetchedParticipatedMeetings = await fetchParticipatedMeetings(userID);
+    const fetchedParticipatedMeetings = await fetchParticipatedMeetings(
+      user_id
+    );
     setParticipatedMeetings(fetchedParticipatedMeetings);
     const fetchedAllMeetings = await fetchAllMeetings();
     setAllMeetings(fetchedAllMeetings);
-    console.log("Loaded");
   };
 
-  const openModal = (event) => {
-    setModalVisible(true);
-    setSelectedMeetingID(event.target.value);
-  };
-  const hideModal = () => {
-    setModalVisible(false);
-    setSelectedMeetingID();
-  };
-
-  const acceptInvitation = () => {
-    setModalVisible(false);
-    console.log("accepted");
-    console.log(selectedMeetingID);
-    initStates();
-  };
-  const goToDetailPage = () => {
+  const goToDetailPage = (event) => {
+    const meeting_id = event.target.value;
     console.log("goToDetailPage");
+    console.log({ meeting_id });
+    history.push("/meeting/view");
   };
+
   const goToFeedBackPage = (event) => {
-    const meetingID = event.target.value;
+    const meeting_id = event.target.value;
     const targetMeeting = participatedMeetings.find(
-      (meeting) => meeting.meetingID === meetingID
+      (meeting) => meeting.meeting_id === meeting_id
     );
     history.push("/meeting/feedback", { meeting: targetMeeting });
   };
 
   return (
     <Container>
-      <Modal show={modalVisible} onHide={hideModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Will you join this nomikai?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={hideModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={acceptInvitation}>
-            Join
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <h1>Meeting lists</h1>
       <Tabs>
         <Tab eventKey={MENU_ITEMS[0]} title={MENU_ITEMS[0]}>
           <MeetingList
             meetings={invitedMeetings}
-            meetingAction={openModal}
+            meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[0]}
           />
         </Tab>
@@ -118,7 +98,7 @@ export default function ViewMeetings() {
         <Tab eventKey={MENU_ITEMS[3]} title={MENU_ITEMS[3]}>
           <MeetingList
             meetings={allMeetings}
-            meetingAction={goToFeedBackPage}
+            meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[3]}
           />
         </Tab>

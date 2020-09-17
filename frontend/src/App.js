@@ -33,7 +33,7 @@ function App() {
                 <CreateMeeting />
               )}
             </Route>
-            <Route path="/meeting/view">
+            <Route path="/meetings">
               {!AuthService.getCurrentUser() ? (
                 <Redirect to="/signin" />
               ) : (

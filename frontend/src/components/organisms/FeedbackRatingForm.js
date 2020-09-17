@@ -2,7 +2,7 @@ import React from "react";
 import { Container, Row, Col, Form } from "react-bootstrap";
 
 export default function FeedbackRatingForm(props) {
-  const { handleInput, meeting } = props;
+  const { handleInput } = props;
   return (
     <Container fluid>
       <Row>

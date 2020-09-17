@@ -1,54 +1,36 @@
+import axios from "axios";
 import BASE_URL from "./constant";
-const MEETING_TEMPLATE = {
-  meetingID: "meeting ID",
-  groupName: "Group Name",
-  leaderName: "leaderName",
-  dateTime: "YYYY-MM-DD hh:mm",
+import authHeader from "../../services/auth-header";
+
+export async function fetchInvitedMeetings(user_id) {
+  const url = `${BASE_URL}/meetings/invited`;
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
+}
+export async function fetchUpcomingMeetings(user_id) {
+  const url = `${BASE_URL}/meetings`;
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
+}
+export async function fetchParticipatedMeetings(user_id) {
+  const url = `${BASE_URL}/meetings/past`;
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
+}
+export async function fetchAllMeetings(user_id) {
+  const url = `${BASE_URL}/meetings/all_past`;
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
+}
+
+const requestWithAuth = async (url, user_id) => {
+  const res = await axios({
+    method: "get",
+    url: url,
+    params: {
+      user_id: user_id,
+    },
+    headers: authHeader(),
+  });
+  return res.data;
 };
-
-const INVITED_MEETIND_TEMPLATE = { ...MEETING_TEMPLATE, groupname: "invited" };
-
-export async function fetchInvitedMeetings(userID) {
-  // const url = `${BASE_URL}/meetings/invited/${userID}`;
-  // const res = await fetch(url, { method: "GET" });
-  // return res.date;
-  return [
-    {
-      meetingID: "meeting ID1",
-      groupName: "Uchiage for the tech training",
-      leaderName: "Nathaniel Fujita",
-      dateTime: "2020-09-18 18:00",
-    },
-    {
-      meetingID: "meeting ID2",
-      groupName: "Christmas party",
-      leaderName: "Taro Tanaka",
-      dateTime: "2020-12-25 10:00",
-    },
-    {
-      meetingID: "meeting ID3",
-      groupName: "Year End Party",
-      leaderName: "Hanako Yamada",
-      dateTime: "2020-12-25 10:00",
-    },
-    INVITED_MEETIND_TEMPLATE,
-  ];
-}
-export async function fetchUpcomingMeetings(userID) {
-  // const url = `${BASE_URL}/meetings/${userID}`;
-  // const res = await fetch(url, { method: "GET" });
-  // return res.date;
-  return [{ ...MEETING_TEMPLATE, groupName: "Upcoming" }];
-}
-export async function fetchParticipatedMeetings(userID) {
-  // const url = `${BASE_URL}/meetings/past/${userID}`;
-  // const res = await fetch(url, { method: "GET" });
-  // return res.date;
-  return [{ ...MEETING_TEMPLATE, groupName: "Participated" }];
-}
-export async function fetchAllMeetings() {
-  // const url = `${BASE_URL}/meetings/past`;
-  // const res = await fetch(url, { method: "GET" });
-  // return res.date;
-  return [{ ...MEETING_TEMPLATE, groupName: "ALL" }];
-}
