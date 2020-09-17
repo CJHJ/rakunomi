@@ -72,7 +72,10 @@ class Meetings(db.Model):
 
     def set_invited_users(self, users_id):
         for user_id in users_id:
-            relationship = MU_Relationship(meeting_id=self.id, user_id=user_id)
+            if (self.leader_id == user_id):
+                relationship = MU_Relationship(meeting_id=self.id, user_id=user_id, approved=True)
+            else:
+                relationship = MU_Relationship(meeting_id=self.id, user_id=user_id)
             db.session.add(relationship)
         db.session.commit()
 
@@ -89,11 +92,11 @@ class Meetings(db.Model):
 
 class MU_Relationship(db.Model):
     meeting_id = db.Column(db.Integer,
-                           db.ForeignKey('meetings.id'),
-                           primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+                           db.ForeignKey('meetings.id'), primary_key=True
+                           )
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     approved = db.Column(db.Boolean, nullable=False, default=False)
-    review = db.Column(db.Text, nullable=False)
+    review = db.Column(db.Text, nullable=False, default="")
 
     def __repr__(self):
         return '<MU_Relationship {}>'.format(self.meeting_id)

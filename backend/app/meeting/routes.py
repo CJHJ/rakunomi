@@ -75,7 +75,7 @@ def get_past_list():
 @jwt_required
 def get_allpast_list():
     meetings = Meetings.query.filter(Meetings.datetime < datetime.utcnow())\
-            .order_by(Meetings.datetime.desc()).all()
+        .order_by(Meetings.datetime.desc()).all()
     ret = {
         'msg':
             'Success',
@@ -113,7 +113,7 @@ def get_meeting():
                 invited_username,
             'confirmed_username': [
                 user.username for user in meeting.get_confirmed_users()
-            ]
+                    ]
         }
     }
     return jsonify(ret), 200
@@ -134,16 +134,19 @@ def create_meeting():
     }
     """
     meeting_info = request.get_json(silent=True)
+    print(meeting_info)
     if not meeting_info:
         return jsonify({"msg": "Invalid request"}), 401
-    new_datetime = datetime.strptime(meeting_info['datetime'], '%Y-%m-%d %H:%M')
-    meeting = Meetings(meeting_name=meeting_info['meeting_name'],
+    new_datetime = datetime.strptime(
+        meeting_info['datetime'], '%Y-%m-%d %H:%M')
+    meeting = Meetings(name=meeting_info['meeting_name'],
                        datetime=new_datetime,
                        leader_id=get_jwt_identity())
-    meeting.set_invited_users(meeting_info['invited_users_id'])
     db.session.add(meeting)
+    db.session.flush()
+    meeting.set_invited_users(meeting_info['invited_users_id'])
     db.session.commit()
-    return jsonify({"msg": "Success"}), 200
+    return jsonify({"msg": "Success", "meeting_id": meeting.id}), 200
 
 
 # only allow leader to change meeting info
@@ -191,11 +194,11 @@ def confirm_meeting():
 @bp.route('/wishlist', methods=['GET'])
 @jwt_required
 def get_wishlist():
-    meeing_id = request.args.get('meeting_id', type=int)
-    meeing = Meetings.query.get(meeing_id)
-    if not meeing:
+    meeting_id = request.args.get('meeting_id', type=int)
+    meeting = Meetings.query.get(meeting_id)
+    if not meeting:
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
-    items = meeing.get_wishlist_items.all()
+    items = meeting.get_wishlist_items()
     ret = {
         'msg':
             'Success',
@@ -227,11 +230,11 @@ def create_wishlist():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"msg": "Invalid request"}), 401
-    meeing = Meetings.query.get(data["meeing_id"])
-    if not meeing:
+    meeting = Meetings.query.get(data["meeting_id"])
+    if not meeting:
         return jsonify({"msg": "Failed to find this meeting"}), 401
     for it in data["data"]:
-        item = Items(meeting_id=data["meeing_id"],
+        item = Items(meeting_id=data["meeting_id"],
                      product_id=it["product_id"],
                      amount=it["amount"],
                      price=it["total_price"])
@@ -277,7 +280,7 @@ def delete_wishlist_item():
         meeting_id=item.meeting_id, user_id=get_jwt_identity()).first()
     if not relationship:
         return jsonify({"msg": "Only allowed to delete item in your meeting"
-                       }), 401
+                        }), 401
     db.session.delete(item)
     db.session.commit()
     return jsonify({'msg': 'Success'}), 200
@@ -313,7 +316,8 @@ def get_feedbacks():
     }
     """
     meeting_id = request.args.get('meeting_id', type=str)
-    relationships = MU_Relationship.query.filter_by(meeting_id=meeting_id).all()
+    relationships = MU_Relationship.query.filter_by(
+        meeting_id=meeting_id).all()
     ret = {
         'msg':
             'Success',
