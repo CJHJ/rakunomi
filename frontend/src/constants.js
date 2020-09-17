@@ -4,10 +4,14 @@ const API_SIGNIN_URL = API_URL + "sign_in";
 
 const API_SEARCH_USER_URL = API_URL + "search/user";
 const API_GET_PRESET_URL = API_URL + "preset";
+const API_SEARCH_ITEM_URL = API_URL + "search/items";
+const API_RECOMMEND_ITEM_URL = API_URL + "recommended";
 
 export {
   API_SIGNIN_URL,
   API_SIGNUP_URL,
   API_SEARCH_USER_URL,
   API_GET_PRESET_URL,
+  API_SEARCH_ITEM_URL,
+  API_RECOMMEND_ITEM_URL,
 };

@@ -114,6 +114,7 @@ export default function CreateMeeting() {
           return data.preset;
         });
         setPresetLoading(false);
+        setPresetMessage("");
       },
       (error) => {
         console.log(error.response);
@@ -134,6 +135,77 @@ export default function CreateMeeting() {
     });
   };
 
+  // -- Search Item
+  const [searchItemLoading, setSearchItemLoading] = useState(false);
+  const [searchItemMessage, setSearchItemMessage] = useState("");
+  const [searchItemName, setSearchItemName] = useState("");
+  const [searchedItems, setSearchedItems] = useState(new Array());
+  const handleSearchItem = () => {
+    setSearchItemMessage("");
+    setSearchItemLoading(true);
+    MeetingService.searchItem(searchItemName).then(
+      (data) => {
+        setSearchedItems(() => {
+          return data.items;
+        });
+        setSearchItemLoading(false);
+      },
+      (error) => {
+        console.log(error.response);
+        const resMessage =
+          (error.response && error.response.data && error.response.data.msg) ||
+          error.message ||
+          error.toString();
+
+        setSearchItemLoading(false);
+        setSearchItemMessage(resMessage);
+      }
+    );
+
+    handleRecommendItem();
+  };
+  const handleAddItem = (e) => {
+    const index = e.currentTarget.dataset.index;
+    setWishlist((oldWishlist) => {
+      console.log(oldWishlist);
+      return [...oldWishlist, searchedItems[index]];
+    });
+  };
+
+  // -- Recommendation Item
+  const [recommendItemLoading, setRecommendItemLoading] = useState(false);
+  const [recommendItemMessage, setRecommendItemMessage] = useState("");
+  const [recommendedItems, setRecommendedItems] = useState(new Array());
+  const handleRecommendItem = () => {
+    setRecommendItemMessage("");
+    setRecommendItemLoading(true);
+    MeetingService.recommendItem().then(
+      (data) => {
+        setRecommendedItems(() => {
+          return data.item;
+        });
+        setRecommendItemLoading(false);
+      },
+      (error) => {
+        console.log(error.response);
+        const resMessage =
+          (error.response && error.response.data && error.response.data.msg) ||
+          error.message ||
+          error.toString();
+
+        setRecommendItemLoading(false);
+        setRecommendItemMessage(resMessage);
+      }
+    );
+  };
+  const handleAddRecommendedItem = (e) => {
+    const index = e.currentTarget.dataset.index;
+    setWishlist((oldWishlist) => {
+      console.log(oldWishlist);
+      return [...oldWishlist, recommendedItems[index]];
+    });
+  };
+
   // Run on mount
   useEffect(() => {
     getPresets();
@@ -145,7 +217,7 @@ export default function CreateMeeting() {
   }, [wishlist]);
 
   return (
-    <Container>
+    <Container className="main-meeting-container">
       <h1>Create Meeting</h1>
       <Form>
         <Card>
@@ -324,8 +396,125 @@ export default function CreateMeeting() {
             )}
           </section>
           {/* Search item */}
-
-          <label>{wishlist.length}</label>
+          <section className="search-item-container">
+            <Row>
+              <Col>
+                <Form.Label>Search item</Form.Label>
+                <Row>
+                  <Col>
+                    <Form.Control
+                      type="text"
+                      placeholder="item name"
+                      onChange={(e) => setSearchItemName(e.target.value)}
+                      value={searchItemName}
+                    />
+                  </Col>
+                  <Col>
+                    <Button
+                      variant="primary"
+                      onClick={handleSearchItem}
+                      disabled={searchItemLoading}
+                    >
+                      Search
+                    </Button>
+                  </Col>
+                </Row>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div>
+                  {searchItemMessage && (
+                    <div className="alert alert-danger" role="alert">
+                      {searchItemMessage}
+                    </div>
+                  )}
+                </div>
+                <Slider {...sliderSettings}>
+                  {searchedItems.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <Card className="wishlist-card">
+                          <div className="wishlist-image">
+                            <img
+                              src={item.image_URLs[0].imageUrl}
+                              alt="First slide"
+                            />
+                          </div>
+                          <div className="wishlist-text">{item.item_name}</div>
+                          <div className="wishlist-text">
+                            {"Price: " + item.price + "円"}
+                          </div>
+                          <div className="wishlist-text">
+                            {"Review: " +
+                              (item.review != "0" ? item.review : "N/A")}
+                          </div>
+                          <div>
+                            <Button
+                              data-index={index}
+                              variety="primary"
+                              onClick={handleAddItem}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                        </Card>
+                      </div>
+                    );
+                  })}
+                </Slider>
+              </Col>
+            </Row>
+            {/* Recommended item */}
+            <Row>
+              <Col>
+                <Form.Label>Recommendations</Form.Label>
+              </Col>
+            </Row>
+            <Row>
+              <Col>
+                <div>
+                  {recommendItemMessage && (
+                    <div className="alert alert-danger" role="alert">
+                      {recommendItemMessage}
+                    </div>
+                  )}
+                </div>
+                <Slider {...sliderSettings}>
+                  {recommendedItems.map((item, index) => {
+                    return (
+                      <div key={index}>
+                        <Card className="wishlist-card">
+                          <div className="wishlist-image">
+                            <img src={item.image_URLs[0].imageUrl} />
+                          </div>
+                          <div className="wishlist-text">{item.item_name}</div>
+                          <div className="wishlist-text">
+                            {"Price: " + item.price + "円"}
+                          </div>
+                          <div className="wishlist-text">
+                            {"Review: " +
+                              (item.review != "0" ? item.review : "N/A")}
+                          </div>
+                          <div>
+                            <Button
+                              data-index={index}
+                              variety="primary"
+                              onClick={handleAddRecommendedItem}
+                            >
+                              Add
+                            </Button>
+                          </div>
+                        </Card>
+                      </div>
+                    );
+                  })}
+                </Slider>
+              </Col>
+            </Row>
+          </section>
+          {/* Submit button! */}
+          <Button variety="primary">Create!</Button>
         </Card>
       </Form>
     </Container>

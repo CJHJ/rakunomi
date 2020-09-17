@@ -1,6 +1,11 @@
 import axios from "axios";
 import authHeader from "./auth-header";
-import { API_SEARCH_USER_URL, API_GET_PRESET_URL } from "../constants";
+import {
+  API_SEARCH_USER_URL,
+  API_SEARCH_ITEM_URL,
+  API_GET_PRESET_URL,
+  API_RECOMMEND_ITEM_URL,
+} from "../constants";
 
 const searchUser = (username) => {
   return axios({
@@ -26,7 +31,37 @@ const getPresets = () => {
   });
 };
 
+const searchItem = (keyword) => {
+  return axios({
+    method: "get",
+    url: API_SEARCH_ITEM_URL,
+    params: {
+      keyword: keyword,
+    },
+    headers: authHeader(),
+  }).then((response) => {
+    return response.data;
+  });
+};
+
+const recommendItem = (keyword) => {
+  return axios({
+    method: "get",
+    url: API_RECOMMEND_ITEM_URL,
+    params: {
+      keyword: keyword,
+    },
+    headers: authHeader(),
+  }).then((response) => {
+    console.log(response);
+
+    return response.data;
+  });
+};
+
 export default {
   searchUser,
   getPresets,
+  searchItem,
+  recommendItem,
 };
