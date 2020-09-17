@@ -5,7 +5,7 @@ from app.models import MU_Relationship, Meetings, Items
 from . import app, db
 
 
-@app.route('/api/feedback', methods='POST')
+@app.route('/api/feedback', methods=['GET'])
 @jwt_required
 def create_feedback():
     form = FeedbackForm(request.form)
@@ -21,7 +21,7 @@ def create_feedback():
     return jsonify({"msg": form.errors}), 401
 
 
-@app.route('/api/wishlist', methods='GET')
+@app.route('/api/wishlist', methods=['GET'])
 @jwt_required
 def get_wishlist():
     meeing_id = request.args.get('meeting_id', type=int)
@@ -42,7 +42,7 @@ def get_wishlist():
     return jsonify(ret), 200
 
 
-@app.route('/api/wishlist', methods='POST')
+@app.route('/api/wishlist', methods=['POST'])
 @jwt_required
 def create_wishlist():
     """
@@ -73,7 +73,7 @@ def create_wishlist():
     return jsonify({"msg": "Success"}), 200
 
 
-@app.route('/api/wishlist', methods='PUT')
+@app.route('/api/wishlist', methods=['PUT'])
 @jwt_required
 def update_wishlist():
     """
@@ -99,7 +99,7 @@ def update_wishlist():
     return jsonify({'msg': 'Success'}), 200
 
 
-@app.route('/api/wishlist', methods='DELETE')
+@app.route('/api/wishlist', methods=['DELETE'])
 @jwt_required
 def delete_wishlist_item():
     item_id = request.args.get('item_id', type=str)

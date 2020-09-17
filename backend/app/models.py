@@ -61,6 +61,23 @@ class Meetings(db.Model):
     def get_wishlist_items(self):
         return Items.query.filter(Items.meeting_id == self.id)
 
+    def get_leader_name(self):
+        return Users.query.get(self.leader_id).username
+
+    def get_invited_users(self):
+        users = Users.query.join(
+            MU_Relationship,
+            (MU_Relationship.user_id == Users.id)).filter(
+                MU_Relationship.meeting_id == self.id).all()
+        return users
+
+    def get_confirmed_users(self):
+        users = Users.query.join(
+            MU_Relationship,
+            (MU_Relationship.user_id == Users.id)).filter(
+                MU_Relationship.meeting_id == self.id, MU_Relationship.approved == True).all()
+        return users
+
 
 class MU_Relationship(db.Model):
     meeting_id = db.Column(db.Integer,
