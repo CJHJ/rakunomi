@@ -1,6 +1,6 @@
 from . import bp
-from flask import jsonify, request, current_app as app
-from flask_jwt_extended import jwt_required
+from flask import jsonify, request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from ..models import Users, Meetings
 from datetime import datetime
 
@@ -19,8 +19,8 @@ def get_confirmed_list():
         'data': [{
             'meeting_id': me.id,
             'meeting_name': me.name,
-            'leader_user_id': me.leader_id,
-            'Datetime': me.datetime
+            'leader_username': me.get_leader_name(),
+            'datetime': me.datetime
         } for me in meetings]
     }
     return jsonify(ret), 200
@@ -40,8 +40,8 @@ def get_invited_list():
         'data': [{
             'meeting_id': me.id,
             'meeting_name': me.name,
-            'leader_user_id': me.leader_id,
-            'Datetime': me.datetime
+            'leader_username': me.get_leader_name(),
+            'datetime': me.datetime
         } for me in meetings]
     }
     return jsonify(ret), 200
@@ -61,13 +61,13 @@ def get_past_list():
         'data': [{
             'meeting_id': me.id,
             'meeting_name': me.name,
-            'leader_user_id': me.leader_id,
-            'Datetime': me.datetime
+            'leader_username': me.get_leader_name(),
+            'datetime': me.datetime
         } for me in meetings]
     }
     return jsonify(ret), 200
 
-
+# remove leader and datetime info for privacy
 @bp.route('/meetings/all_past', methods=['GET'])
 @jwt_required
 def get_allpast_list():
@@ -78,9 +78,29 @@ def get_allpast_list():
             'Success',
         'data': [{
             'meeting_id': me.id,
-            'meeting_name': me.name,
-            'leader_user_id': me.leader_id,
-            'Datetime': me.datetime
+            'meeting_name': me.name
         } for me in meetings]
+    }
+    return jsonify(ret), 200
+
+
+@bp.route('/meeting', methods=['GET'])
+@jwt_required
+def get_meeting():
+    meeting_id = request.args.get('meeting_id', type=str)
+    user_id = get_jwt_identity()
+    meeting = Meetings.query.get(meeting_id)
+    if not meeting:
+        return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
+    ret = {
+        'msg':
+            'Success',
+        'data': {
+            'meeting_name': meeting.name,
+            'leader_username': meeting.get_leader_name(),
+            'datetime': meeting.datetime,
+            'invited_username': [],
+            'confirmed_username': []
+        }
     }
     return jsonify(ret), 200
