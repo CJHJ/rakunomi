@@ -25,10 +25,10 @@ def check_if_token_in_blacklist(decrypted_token):
 
 
 # blueprint
-from app.auth import bp as auth_bp
+from app.user import bp as user_bp
 from app.rakuten import bp as rakuten_bp
 from app.meeting import bp as meeting_bp
-app.register_blueprint(auth_bp)
+app.register_blueprint(user_bp)
 app.register_blueprint(rakuten_bp)
 app.register_blueprint(meeting_bp)
 
@@ -37,4 +37,3 @@ if __name__ == '__main__':
 
 # avoid circular import
 from . import models
-from . import main
