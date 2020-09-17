@@ -286,6 +286,52 @@ def delete_wishlist_item():
     return jsonify({'msg': 'Success'}), 200
 
 
+@bp.route('/wishlist/update', methods=['PUT'])
+@jwt_required
+def update_wishlist_items():
+    """
+    Update a wishlist item
+    Inputs:
+    -------
+    {
+        "meeting_id" : 0,
+        "items": {
+            "item_id": 1,
+            "product_id": 12,
+            "amount": 2,
+            "total_price": 200
+        }
+    }
+    """
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"msg": "Invalid request"}), 401
+    
+    # Delete items
+    items = Items.query.filter_by(meeting_id=data["meeting_id"]).all()
+    if not items:
+        return jsonify({"msg": "Failed to find these items"}), 401
+    for item in items:
+        db.session.delete(item)
+    db.session.flush()
+    print(data)
+    
+    # Add items
+    meeting = Meetings.query.get(data["meeting_id"])
+    if not meeting:
+        return jsonify({"msg": "Failed to find this meeting"}), 401
+    for it in data["items"]:
+        item = Items(meeting_id=data["meeting_id"],
+                     product_id=it["product_id"],
+                     amount=it["amount"],
+                     price=it["total_price"])
+        db.session.add(item)
+    db.session.flush()
+
+    db.session.commit()
+    return jsonify({'msg': 'Success'}), 200
+
+
 @bp.route('/feedback', methods=['POST'])
 @jwt_required
 def create_feedback():
