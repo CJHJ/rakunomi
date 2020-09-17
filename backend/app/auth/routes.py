@@ -111,8 +111,7 @@ def search_user():
     user = Users.query.filter_by(username=username).first()
     if not user:
         return jsonify({"msg": "Can't find this user"}), 401
-    return jsonify({"msg": "Find this user!",
-                    "user_id": user.id}), 200
+    return jsonify({"msg": "Find this user!", "user_id": user.id}), 200
 
 
 @bp.route('/user/<username>', methods=['GET'])
