@@ -12,7 +12,7 @@ def get_confirmed_list():
     cur_user = Users.query.get(user_id)
     if not cur_user:
         return jsonify({"msg": "Failed to find this user", "data": ""}), 401
-    meetings = cur_user.confirmed_meetings().all()
+    meetings = cur_user.get_confirmed_meetings().all()
     ret = {
         'msg':
             'Success',
@@ -33,7 +33,7 @@ def get_invited_list():
     cur_user = Users.query.get(user_id)
     if not cur_user:
         return jsonify({"msg": "Failed to find this user", "data": ""}), 401
-    meetings = cur_user.invited_meetings().all()
+    meetings = cur_user.get_invited_meetings().all()
     ret = {
         'msg':
             'Success',
@@ -54,7 +54,7 @@ def get_past_list():
     cur_user = Users.query.get(user_id)
     if not cur_user:
         return jsonify({"msg": "Failed to find this user", "data": ""}), 401
-    meetings = cur_user.past_meetings().all()
+    meetings = cur_user.get_past_meetings().all()
     ret = {
         'msg':
             'Success',
