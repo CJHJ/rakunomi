@@ -8,6 +8,7 @@ import os
 APP_ID = os.environ.get('RAKUTEN_API_APPLICATION_ID')
 API_ENDPOINT = f'https://app.rakuten.co.jp/services/api/IchibaItem/Search/20170706?applicationId={APP_ID}'
 KEYWORD_PREFIX = "&keyword="
+PRODUCT_ID_PREFIX = "&itemCode="
 
 SEARCH_KEYWORDS_FOR_PRESET = [
     ["ワイン", 'ビール', '日本酒', '焼酎', '果実酒'],  # Drinks
@@ -113,6 +114,37 @@ def search_with_keyword():
     return jsonify({'items': items}), 200
 
 
+@bp.route('/search/product_id', methods=['GET'])
+def search_with_itemCode():
+    """
+    Returns
+    -------
+    {
+        'items':[
+            {
+                item_name: string,
+                rakuten_pruduct_id: string,
+                price: int,
+                image_URL: url[],
+                review:double,
+            }, ...
+            ]
+    }
+    """
+    product_id = request.args.get('product_id', type=str)
+    if product_id == None:
+        abort(400)
+    items = []
+
+    fetched_items = call_rakuten_search_API_with_product_id(
+        product_id)
+    if len(fetched_items) == 0:
+        return jsonify({'items': []})
+
+    item = extract_item_attribute(fetched_items[0]['Item'])
+    return jsonify({'item': item}), 200
+
+
 def generate_keywords_for_preset(num_items_per_genre=[2, 1, 2, 1]):
     """
     generate search keywords to make preset.
@@ -137,6 +169,17 @@ def call_rakuten_search_API_with_keyword(keyword):
     response_json = response.json()
     fetched_items = response_json["Items"]
     return fetched_items
+
+
+def call_rakuten_search_API_with_product_id(product_id):
+    uri = API_ENDPOINT + PRODUCT_ID_PREFIX + product_id
+    response = requests.get(uri)
+    response_json = response.json()
+    try:
+        fetched_items = response_json["Items"]
+        return fetched_items
+    except:
+        return []
 
 
 def fetch_random_items_with_keywords(keyword, num_item=1):

@@ -5,7 +5,7 @@ from app.models import MU_Relationship, Meetings, Items
 from . import app, db
 
 
-@app.route('/api/feedback', methods=['GET'])
+@app.route('/api/feedback', methods=['POST'])
 @jwt_required
 def create_feedback():
     form = FeedbackForm(request.form)
@@ -24,19 +24,19 @@ def create_feedback():
 @app.route('/api/wishlist', methods=['GET'])
 @jwt_required
 def get_wishlist():
-    meeing_id = request.args.get('meeting_id', type=int)
-    meeing = Meetings.query.get(meeing_id)
-    if not meeing:
+    meeting_id = request.args.get('meeting_id', type=int)
+    meeting = Meetings.query.get(meeting_id)
+    if not meeting:
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
-    items = meeing.get_wishlist_items.all()
+    items = meeting.get_wishlist_items.all()
     ret = {
         'msg':
             'Success',
         'data': [{
-            'item id': it.id,
-            'product id': it.product_id,
+            'item_id': it.id,
+            'product_id': it.product_id,
             'amount': it.amount,
-            'total price': it.price
+            'total_price': it.price
         } for it in items]
     }
     return jsonify(ret), 200
@@ -60,11 +60,11 @@ def create_wishlist():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"msg": "Invalid request"}), 401
-    meeing = Meetings.query.get(data["meeing_id"])
-    if not meeing:
+    meeting = Meetings.query.get(data["meeting_id"])
+    if not meeting:
         return jsonify({"msg": "Failed to find this meeting"}), 401
     for it in data["data"]:
-        item = Items(meeting_id=data["meeing_id"],
+        item = Items(meeting_id=data["meeting_id"],
                      product_id=it["product_id"],
                      amount=it["amount"],
                      price=it["total_price"])
@@ -110,7 +110,7 @@ def delete_wishlist_item():
         meeting_id=item.meeting_id, user_id=get_jwt_identity()).first()
     if not relationship:
         return jsonify({"msg": "Only allowed to delete item in your meeting"
-                       }), 401
+                        }), 401
     db.session.delete(item)
     db.session.commit()
     return jsonify({'msg': 'Success'}), 200

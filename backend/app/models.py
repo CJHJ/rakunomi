@@ -27,7 +27,7 @@ class Users(db.Model):
             (MU_Relationship.meeting_id == Meetings.id)).filter(
                 MU_Relationship.user_id == self.id,
                 MU_Relationship.approved == True)
-        return meetings.filter(Meetings.datetime > datetime.utcnow())\
+        return meetings.filter(Meetings.datetime > datetime.now())\
             .order_by(Meetings.datetime.desc())
 
     def get_invited_meetings(self):
@@ -36,7 +36,7 @@ class Users(db.Model):
             (MU_Relationship.meeting_id == Meetings.id)).filter(
                 MU_Relationship.user_id == self.id,
                 MU_Relationship.approved == False)
-        return meetings.filter(Meetings.datetime > datetime.utcnow())\
+        return meetings.filter(Meetings.datetime > datetime.now())\
             .order_by(Meetings.datetime.desc())
 
     def get_past_meetings(self):
@@ -44,7 +44,7 @@ class Users(db.Model):
             MU_Relationship,
             (MU_Relationship.meeting_id == Meetings.id)).filter(
                 MU_Relationship.user_id == self.id)
-        return meetings.filter(Meetings.datetime < datetime.utcnow())\
+        return meetings.filter(Meetings.datetime < datetime.now())\
             .order_by(Meetings.datetime.desc())
 
 
@@ -53,7 +53,7 @@ class Meetings(db.Model):
     name = db.Column(db.String(128))
     zoom_url = db.Column(db.String(2083))
     leader_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    datetime = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    datetime = db.Column(db.DateTime, index=True, default=datetime.now)
 
     def __repr__(self):
         return '<Meeting {}>'.format(self.name)
@@ -66,26 +66,37 @@ class Meetings(db.Model):
 
     def get_invited_users(self):
         users = Users.query.join(
-            MU_Relationship,
-            (MU_Relationship.user_id == Users.id)).filter(
+            MU_Relationship, (MU_Relationship.user_id == Users.id)).filter(
                 MU_Relationship.meeting_id == self.id).all()
         return users
 
+    def set_invited_users(self, users_id):
+        for user_id in users_id:
+            if (self.leader_id == user_id):
+                relationship = MU_Relationship(meeting_id=self.id, user_id=user_id, approved=True)
+            else:
+                relationship = MU_Relationship(meeting_id=self.id, user_id=user_id)
+            db.session.add(relationship)
+        db.session.commit()
+
     def get_confirmed_users(self):
-        users = Users.query.join(
-            MU_Relationship,
-            (MU_Relationship.user_id == Users.id)).filter(
-                MU_Relationship.meeting_id == self.id, MU_Relationship.approved == True).all()
+        users = Users.query.join(MU_Relationship,
+                                 (MU_Relationship.user_id == Users.id)).filter(
+                                     MU_Relationship.meeting_id == self.id,
+                                     MU_Relationship.approved == True).all()
         return users
+
+    def is_past(self):
+        return self.datetime < datetime.now()
 
 
 class MU_Relationship(db.Model):
     meeting_id = db.Column(db.Integer,
-                           db.ForeignKey('meetings.id'),
-                           primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+                           db.ForeignKey('meetings.id'), primary_key=True
+                           )
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), primary_key=True)
     approved = db.Column(db.Boolean, nullable=False, default=False)
-    review = db.Column(db.Text, nullable=False)
+    review = db.Column(db.Text, nullable=False, default="")
 
     def __repr__(self):
         return '<MU_Relationship {}>'.format(self.meeting_id)
@@ -94,7 +105,7 @@ class MU_Relationship(db.Model):
 class Items(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
-    product_id = db.Column(db.String(64), index=True, unique=True)
+    product_id = db.Column(db.String(64), index=True)
     amount = db.Column(db.Integer)
     # price means total price
     price = db.Column(db.Integer)
