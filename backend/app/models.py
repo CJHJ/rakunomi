@@ -105,7 +105,7 @@ class MU_Relationship(db.Model):
 class Items(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     meeting_id = db.Column(db.Integer, db.ForeignKey('meetings.id'))
-    product_id = db.Column(db.String(64), index=True, unique=True)
+    product_id = db.Column(db.String(64), index=True)
     amount = db.Column(db.Integer)
     # price means total price
     price = db.Column(db.Integer)
