@@ -37,3 +37,4 @@ if __name__ == '__main__':
 
 # avoid circular import
 from . import models
+from . import main
