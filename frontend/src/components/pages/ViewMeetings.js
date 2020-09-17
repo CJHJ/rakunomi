@@ -64,7 +64,7 @@ export default function ViewMeetings() {
   };
 
   const goToFeedBackPage = (event) => {
-    const meeting_id = event.target.value;
+    const meeting_id = parseInt(event.target.value, 10);
     const targetMeeting = participatedMeetings.find(
       (meeting) => meeting.meeting_id === meeting_id
     );

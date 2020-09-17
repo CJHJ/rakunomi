@@ -5,7 +5,7 @@ from app.models import MU_Relationship, Meetings, Items
 from . import app, db
 
 
-@app.route('/api/feedback', methods=['GET'])
+@app.route('/api/feedback', methods=['POST'])
 @jwt_required
 def create_feedback():
     form = FeedbackForm(request.form)
@@ -110,7 +110,7 @@ def delete_wishlist_item():
         meeting_id=item.meeting_id, user_id=get_jwt_identity()).first()
     if not relationship:
         return jsonify({"msg": "Only allowed to delete item in your meeting"
-                       }), 401
+                        }), 401
     db.session.delete(item)
     db.session.commit()
     return jsonify({'msg': 'Success'}), 200

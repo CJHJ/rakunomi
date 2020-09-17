@@ -4,16 +4,15 @@ import authHeader from "../../services/auth-header";
 
 export async function sendFeedback(meetingID, feedback) {
   const url = `${BASE_URL}/feedback`;
-  const data = {
-    meeting_id: meetingID,
-    Feedback: feedback,
-  };
+  const fromData = new FormData();
+  fromData.append("meeting_id", meetingID);
+  fromData.append("review", feedback);
   const headers = authHeader();
   try {
     const res = await axios({
-      method: "get",
+      method: "POST",
       url: url,
-      params: data,
+      data: fromData,
       headers: headers,
     });
   } catch (e) {
