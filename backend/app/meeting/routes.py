@@ -171,11 +171,14 @@ def update_meeting():
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
     meeting_info = data['data']
     if meeting.leader_id == user_id:
-        meeting.meeting_name = meeting_info['meeting_name']
+        
+        meeting.name = meeting_info['meeting_name']
         new_datetime = datetime.strptime(meeting_info['datetime'],
                                          '%Y-%m-%d %H:%M')
         meeting.datetime = new_datetime
-        meeting.set_invited_users(meeting_info['invited_users_id'])
+        # meeting.set_invited_users(meeting_info['invited_users_id'])
+        
+    db.session.commit()
     return jsonify({"msg": "Success"}), 200
 
 
@@ -185,9 +188,11 @@ def confirm_meeting():
     meeting_id = request.args.get('meeting_id', type=str)
     relationship = MU_Relationship.query.filter_by(
         meeting_id=meeting_id, user_id=get_jwt_identity()).first()
+    print(meeting_id)
     if not relationship:
         return jsonify({"msg": "Failed to confirm your meeting"}), 401
     relationship.approved = True
+    db.session.commit()
     return jsonify({"msg": "Success"}), 200
 
 
@@ -282,6 +287,52 @@ def delete_wishlist_item():
         return jsonify({"msg": "Only allowed to delete item in your meeting"
                         }), 401
     db.session.delete(item)
+    db.session.commit()
+    return jsonify({'msg': 'Success'}), 200
+
+
+@bp.route('/wishlist/update', methods=['PUT'])
+@jwt_required
+def update_wishlist_items():
+    """
+    Update a wishlist item
+    Inputs:
+    -------
+    {
+        "meeting_id" : 0,
+        "items": {
+            "item_id": 1,
+            "product_id": 12,
+            "amount": 2,
+            "total_price": 200
+        }
+    }
+    """
+    data = request.get_json(silent=True)
+    if not data:
+        return jsonify({"msg": "Invalid request"}), 401
+    
+    # Delete items
+    items = Items.query.filter_by(meeting_id=data["meeting_id"]).all()
+    if not items:
+        return jsonify({"msg": "Failed to find these items"}), 401
+    for item in items:
+        db.session.delete(item)
+    db.session.flush()
+    print(data)
+    
+    # Add items
+    meeting = Meetings.query.get(data["meeting_id"])
+    if not meeting:
+        return jsonify({"msg": "Failed to find this meeting"}), 401
+    for it in data["items"]:
+        item = Items(meeting_id=data["meeting_id"],
+                     product_id=it["product_id"],
+                     amount=it["amount"],
+                     price=it["total_price"])
+        db.session.add(item)
+    db.session.flush()
+
     db.session.commit()
     return jsonify({'msg': 'Success'}), 200
 
