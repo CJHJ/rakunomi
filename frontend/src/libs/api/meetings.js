@@ -1,63 +1,29 @@
 import axios from "axios";
 import BASE_URL from "./constant";
 import authHeader from "../../services/auth-header";
-const MEETING_TEMPLATE = {
-  meeting_id: "meeting ID",
-  meeting_name: "Group Name",
-  leader_user_id: "leader_user_id",
-  Datetime: "YYYY-MM-DD hh:mm",
-};
-const FAKE_INVITED = [
-  {
-    meeting_id: "meeting ID1",
-    meeting_name: "Uchiage for the tech training",
-    leader_user_id: "Nathaniel Fujita",
-    Datetime: "2020-09-18 18:00",
-  },
-  {
-    meeting_id: "meeting ID2",
-    meeting_name: "Christmas party",
-    leader_user_id: "Taro Tanaka",
-    Datetime: "2020-12-25 10:00",
-  },
-  {
-    meeting_id: "meeting ID3",
-    meeting_name: "Year End Party",
-    leader_user_id: "Hanako Yamada",
-    Datetime: "2020-12-25 10:00",
-  },
-];
 
-export async function fetchInvitedMeetings(userID) {
+export async function fetchInvitedMeetings(user_id) {
   const url = `${BASE_URL}/meetings/invited`;
-  console.log("invited", url);
-  const res = await requestWithAuth(url);
-  return FAKE_INVITED;
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
 }
-export async function fetchUpcomingMeetings(userID) {
+export async function fetchUpcomingMeetings(user_id) {
   const url = `${BASE_URL}/meetings`;
-  console.log("up", url);
-  // const res = await requestWithAuth(url);
-  return [{ ...MEETING_TEMPLATE, meeting_name: "Upcoming" }];
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
 }
-export async function fetchParticipatedMeetings(userID) {
+export async function fetchParticipatedMeetings(user_id) {
   const url = `${BASE_URL}/meetings/past`;
-  console.log("past me", url);
-  // const res = await requestWithAuth(url);
-  return [{ ...MEETING_TEMPLATE, meeting_name: "Participated" }];
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
 }
-export async function fetchAllMeetings() {
-  const url = `${BASE_URL}/meetings/past`;
-  console.log("all", url);
-  // const res = await requestWithAuth(url);
-  return [{ ...MEETING_TEMPLATE, meeting_name: "ALL" }];
+export async function fetchAllMeetings(user_id) {
+  const url = `${BASE_URL}/meetings/all_past`;
+  const res = await requestWithAuth(url, user_id);
+  return res.data;
 }
 
-const requestWithAuth = async (url) => {
-  const user_id = 1; //TODO get real USERID
-  const headers = authHeader();
-  console.log({ headers });
-
+const requestWithAuth = async (url, user_id) => {
   const res = await axios({
     method: "get",
     url: url,
@@ -66,6 +32,5 @@ const requestWithAuth = async (url) => {
     },
     headers: authHeader(),
   });
-  console.log(res.data);
   return res.data;
 };

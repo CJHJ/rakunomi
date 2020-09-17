@@ -1,9 +1,31 @@
 import React from "react";
 import { Card, Button, Spinner } from "react-bootstrap";
+import { useHistory } from "react-router-dom";
 
 export default function MeetingList(props) {
+  const history = useHistory();
   if (!props.meetings) {
     return <Spinner animation="border" />;
+  }
+
+  if (props.meetings.length === 0) {
+    return (
+      <Card>
+        <Card.Body>
+          <Card.Title>Nothing to show</Card.Title>
+          <Button
+            variant="primary"
+            onClick={() => {
+              history.push("/meeting/create");
+            }}
+            size="lg"
+            block
+          >
+            {"Create New Nomikai"}
+          </Button>
+        </Card.Body>
+      </Card>
+    );
   }
   const renderRow = (meeting) => {
     return (
@@ -11,10 +33,7 @@ export default function MeetingList(props) {
         <Card key={meeting.meeting_id} className="text-center">
           <Card.Body>
             <Card.Title>{meeting.meeting_name}</Card.Title>
-            <Card.Text>
-              Invited by:{"<meeting.leader_name>"}
-              {meeting.leaderName}
-            </Card.Text>
+            <Card.Text>Invited by:{meeting.leader_username}</Card.Text>
             <Card.Text>Datetime: {meeting.Datetime}</Card.Text>
             <Button
               variant="primary"
