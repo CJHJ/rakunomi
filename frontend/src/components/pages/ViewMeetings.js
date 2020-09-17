@@ -12,7 +12,12 @@ import {
 } from "../../libs/api/meetings";
 
 const MENU_ITEMS = ["Invited", "Upcoming", "Past", "Others"];
-const ACTION_NAMES = ["Join", "View Detail", "Give Feedback", "View Detail"];
+const ACTION_NAMES = [
+  "Check the Detail",
+  "View Detail",
+  "Give Feedback",
+  "View Detail",
+];
 
 export default function ViewMeetings() {
   const history = useHistory();
@@ -21,8 +26,6 @@ export default function ViewMeetings() {
   const [upcomingMeetings, setUpcomingMeetings] = React.useState();
   const [participatedMeetings, setParticipatedMeetings] = React.useState();
   const [allMeetings, setAllMeetings] = React.useState();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [selectedMeetingID, setSelectedMeetingID] = React.useState();
 
   React.useEffect(() => {
     loadAndSetUserID();
@@ -51,24 +54,14 @@ export default function ViewMeetings() {
     const fetchedAllMeetings = await fetchAllMeetings();
     setAllMeetings(fetchedAllMeetings);
   };
-  const openModal = (event) => {
-    setModalVisible(true);
-    setSelectedMeetingID(event.target.value);
-  };
-  const hideModal = () => {
-    setModalVisible(false);
-    setSelectedMeetingID();
+
+  const goToDetailPage = (event) => {
+    const meeting_id = event.target.value;
+    console.log("goToDetailPage");
+    console.log({ meeting_id });
+    history.push("/meeting/view");
   };
 
-  const acceptInvitation = () => {
-    setModalVisible(false);
-    console.log("accepted");
-    console.log(selectedMeetingID);
-    //TODO accept API
-  };
-  const goToDetailPage = () => {
-    console.log("goToDetailPage");
-  };
   const goToFeedBackPage = (event) => {
     const meeting_id = event.target.value;
     const targetMeeting = participatedMeetings.find(
@@ -79,26 +72,12 @@ export default function ViewMeetings() {
 
   return (
     <Container>
-      <Modal show={modalVisible} onHide={hideModal}>
-        <Modal.Header closeButton>
-          <Modal.Title>Confirm</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>Will you join this nomikai?</Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={hideModal}>
-            Cancel
-          </Button>
-          <Button variant="primary" onClick={acceptInvitation}>
-            Join
-          </Button>
-        </Modal.Footer>
-      </Modal>
       <h1>Meeting lists</h1>
       <Tabs>
         <Tab eventKey={MENU_ITEMS[0]} title={MENU_ITEMS[0]}>
           <MeetingList
             meetings={invitedMeetings}
-            meetingAction={openModal}
+            meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[0]}
           />
         </Tab>
@@ -119,7 +98,7 @@ export default function ViewMeetings() {
         <Tab eventKey={MENU_ITEMS[3]} title={MENU_ITEMS[3]}>
           <MeetingList
             meetings={allMeetings}
-            meetingAction={goToFeedBackPage}
+            meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[3]}
           />
         </Tab>
