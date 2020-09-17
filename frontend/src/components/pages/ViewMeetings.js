@@ -56,11 +56,27 @@ export default function ViewMeetings() {
     setAllMeetings(fetchedAllMeetings);
   };
 
-  const goToDetailPage = (event) => {
-    const meeting_id = event.target.value;
-    console.log("goToDetailPage");
-    console.log({ meeting_id });
-    history.push("/meeting/view");
+  const goToDetailPageUpcoming = (event) => {
+    const meeting_id = parseInt(event.target.value, 10);
+    const targetMeeting = upcomingMeetings.find(
+      (meeting) => meeting.meeting_id === meeting_id
+    );
+    history.push("/meeting/view", { meeting: targetMeeting });
+  };
+  const goToDetailPageAll = (event) => {
+    const meeting_id = parseInt(event.target.value, 10);
+    const targetMeeting = allMeetings.find(
+      (meeting) => meeting.meeting_id === meeting_id
+    );
+    history.push("/meeting/view", { meeting: targetMeeting });
+  };
+
+  const goToEditPage = (event) => {
+    const meeting_id = parseInt(event.target.value, 10);
+    const targetMeeting = invitedMeetings.find(
+      (meeting) => meeting.meeting_id === meeting_id
+    );
+    history.push("/meeting/edit", { meeting: targetMeeting });
   };
 
   const goToFeedBackPage = (event) => {
@@ -91,7 +107,7 @@ export default function ViewMeetings() {
         >
           <MeetingList
             meetings={invitedMeetings}
-            meetingAction={goToDetailPage}
+            meetingAction={goToEditPage}
             actionName={ACTION_NAMES[0]}
           />
         </Tab>
@@ -107,7 +123,7 @@ export default function ViewMeetings() {
         >
           <MeetingList
             meetings={upcomingMeetings}
-            meetingAction={goToDetailPage}
+            meetingAction={goToDetailPageUpcoming}
             actionName={ACTION_NAMES[1]}
           />
         </Tab>
@@ -139,7 +155,7 @@ export default function ViewMeetings() {
         >
           <MeetingList
             meetings={allMeetings}
-            meetingAction={goToDetailPage}
+            meetingAction={goToDetailPageAll}
             actionName={ACTION_NAMES[3]}
           />
         </Tab>
