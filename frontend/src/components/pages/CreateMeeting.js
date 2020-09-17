@@ -13,6 +13,9 @@ import {
   Carousel,
 } from "react-bootstrap";
 import DateTimePicker from "react-datetime-picker";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
 
 import AuthService from "../../services/auth.service";
 import MeetingService from "../../services/meeting.service";
@@ -78,6 +81,25 @@ export default function CreateMeeting() {
 
   // -- Wishlist related
   const [wishlist, setWishlist] = useState(new Array());
+  const [isWishlistShown, setIsWishlistShown] = useState(false);
+  const [wishlistPrice, setWishlistPrice] = useState(0);
+  const sliderSettings = {
+    dots: false,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 5,
+    slidesToScroll: 5,
+  };
+  const toggleWishlist = () => {
+    setIsWishlistShown((oldState) => {
+      return oldState ? false : true;
+    });
+  };
+  const calculatePrice = () => {
+    setWishlistPrice(() => {
+      return wishlist.reduce((a, b) => +a + +b.price, 0);
+    });
+  };
 
   // -- Preset
   const [presetLoading, setPresetLoading] = useState();
@@ -116,6 +138,11 @@ export default function CreateMeeting() {
   useEffect(() => {
     getPresets();
   }, []);
+
+  // Run on wishlist change
+  useEffect(() => {
+    calculatePrice();
+  }, [wishlist]);
 
   return (
     <Container>
@@ -232,14 +259,14 @@ export default function CreateMeeting() {
                           );
                         })}
                       </Carousel>
-                      <label className="item-label">{item.item_name}</label>
-                      <label className="item-price">
+                      <div className="item-label">{item.item_name}</div>
+                      <div className="item-label">
                         {"Price: " + item.price + "円"}
-                      </label>
-                      <label className="item-review">
+                      </div>
+                      <div className="item-label">
                         {"Review: " +
                           (item.review != "0" ? item.review : "N/A")}
-                      </label>
+                      </div>
                     </Card>
                   </Col>
                 );
@@ -247,6 +274,57 @@ export default function CreateMeeting() {
             </Row>
           </Form.Group>
           {/* Wishlist */}
+          <section className="wishlist-container">
+            <Row>
+              <Col>
+                <h5>Wishlist</h5>
+              </Col>
+
+              <Col>{wishlist.length} items</Col>
+              <Col>Total price: {wishlistPrice}円</Col>
+              <Col>
+                Price/1 person: {wishlistPrice / participantList.length}円
+              </Col>
+              <Col>
+                <Button
+                  className="wishlist-showhide"
+                  variant="primary"
+                  onClick={toggleWishlist}
+                >
+                  {isWishlistShown ? "Hide" : "Show"}
+                </Button>
+              </Col>
+            </Row>
+
+            {isWishlistShown && (
+              <Slider {...sliderSettings}>
+                {wishlist.map((item, presetIndex) => {
+                  return (
+                    <div>
+                      <Card className="wishlist-card">
+                        <div className="wishlist-image">
+                          <img
+                            src={item.image_URLs[0].imageUrl}
+                            alt="First slide"
+                          />
+                        </div>
+                        <div className="wishlist-text">{item.item_name}</div>
+                        <div className="wishlist-text">
+                          {"Price: " + item.price + "円"}
+                        </div>
+                        <div className="wishlist-text">
+                          {"Review: " +
+                            (item.review != "0" ? item.review : "N/A")}
+                        </div>
+                      </Card>
+                    </div>
+                  );
+                })}
+              </Slider>
+            )}
+          </section>
+          {/* Search item */}
+
           <label>{wishlist.length}</label>
         </Card>
       </Form>
