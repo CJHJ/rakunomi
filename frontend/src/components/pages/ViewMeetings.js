@@ -2,6 +2,7 @@ import React from "react";
 import { MeetingList } from "../organisms";
 import { Container, Tabs, Tab, Modal, Button } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
+import AuthService from "../../services/auth.service";
 
 import {
   fetchInvitedMeetings,
@@ -15,7 +16,7 @@ const ACTION_NAMES = ["Join", "View Detail", "Give Feedback", "View Detail"];
 
 export default function ViewMeetings() {
   const history = useHistory();
-  const [userID, setUserID] = React.useState();
+  const [user, setUser] = React.useState();
   const [invitedMeetings, setInvitedMeetings] = React.useState();
   const [upcomingMeetings, setUpcomingMeetings] = React.useState();
   const [participatedMeetings, setParticipatedMeetings] = React.useState();
@@ -24,32 +25,32 @@ export default function ViewMeetings() {
   const [selectedMeetingID, setSelectedMeetingID] = React.useState();
 
   React.useEffect(() => {
-    initStates();
+    loadAndSetUserID();
   }, []);
 
-  const initStates = async () => {
-    const userIDFromLocalStorage = await loadAndSetUserID();
-    fetchMeetings(userIDFromLocalStorage);
-  };
-
   const loadAndSetUserID = async () => {
-    const userIDFromLocalStorage = 0; //TODO change it to get real user ID
-    setUserID(userIDFromLocalStorage);
-    return userIDFromLocalStorage;
+    const userFromLocalStorage = AuthService.getCurrentUser();
+    setUser(userFromLocalStorage);
   };
 
-  const fetchMeetings = async (userID) => {
-    const fetchedInvitedMeetings = await fetchInvitedMeetings(userID);
+  React.useEffect(() => {
+    if (user && user.user_id) {
+      fetchMeetings(user.user_id);
+    }
+  }, [user]);
+
+  const fetchMeetings = async (user_id) => {
+    const fetchedInvitedMeetings = await fetchInvitedMeetings(user_id);
     setInvitedMeetings(fetchedInvitedMeetings);
-    const fetchedUpcomingMeetings = await fetchUpcomingMeetings(userID);
+    const fetchedUpcomingMeetings = await fetchUpcomingMeetings(user_id);
     setUpcomingMeetings(fetchedUpcomingMeetings);
-    const fetchedParticipatedMeetings = await fetchParticipatedMeetings(userID);
+    const fetchedParticipatedMeetings = await fetchParticipatedMeetings(
+      user_id
+    );
     setParticipatedMeetings(fetchedParticipatedMeetings);
     const fetchedAllMeetings = await fetchAllMeetings();
     setAllMeetings(fetchedAllMeetings);
-    console.log("Loaded");
   };
-
   const openModal = (event) => {
     setModalVisible(true);
     setSelectedMeetingID(event.target.value);
@@ -63,7 +64,7 @@ export default function ViewMeetings() {
     setModalVisible(false);
     console.log("accepted");
     console.log(selectedMeetingID);
-    initStates();
+    //TODO accept API
   };
   const goToDetailPage = () => {
     console.log("goToDetailPage");
