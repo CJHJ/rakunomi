@@ -36,7 +36,7 @@ class Header extends React.Component {
             )}
             {currentUser && (
               <li className="header-nav-button">
-                <Link to="/meeting/view">View Meetings</Link>
+                <Link to="/meetings">View Meetings</Link>
               </li>
             )}
           </ul>
