@@ -66,28 +66,26 @@ class Meetings(db.Model):
 
     def get_invited_users(self):
         users = Users.query.join(
-            MU_Relationship,
-            (MU_Relationship.user_id == Users.id)).filter(
+            MU_Relationship, (MU_Relationship.user_id == Users.id)).filter(
                 MU_Relationship.meeting_id == self.id).all()
         return users
 
     def set_invited_users(self, users_id):
         for user_id in users_id:
-            relationship = MU_Relationship(meeting_id=self.id,
-                user_id=user_id
-            )
+            relationship = MU_Relationship(meeting_id=self.id, user_id=user_id)
             db.session.add(relationship)
         db.session.commit()
 
     def get_confirmed_users(self):
-        users = Users.query.join(
-            MU_Relationship,
-            (MU_Relationship.user_id == Users.id)).filter(
-                MU_Relationship.meeting_id == self.id, MU_Relationship.approved == True).all()
+        users = Users.query.join(MU_Relationship,
+                                 (MU_Relationship.user_id == Users.id)).filter(
+                                     MU_Relationship.meeting_id == self.id,
+                                     MU_Relationship.approved == True).all()
         return users
 
     def is_past(self):
         return self.datetime < datetime.now()
+
 
 class MU_Relationship(db.Model):
     meeting_id = db.Column(db.Integer,

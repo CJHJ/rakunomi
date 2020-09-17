@@ -68,6 +68,7 @@ def get_past_list():
     }
     return jsonify(ret), 200
 
+
 # remove leader and datetime info for privacy
 @bp.route('/meetings/all_past', methods=['GET'])
 @jwt_required
@@ -95,16 +96,23 @@ def get_meeting():
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
     invited_username = []
     if meeting.leader_id == user_id:
-            invited_username = [user.username for user in meeting.get_invited_users()]
+        invited_username = [
+            user.username for user in meeting.get_invited_users()
+        ]
     ret = {
-        'msg':
-            'Success',
+        'msg': 'Success',
         'data': {
-            'meeting_name': meeting.name,
-            'leader_username': meeting.get_leader_name(),
-            'datetime': meeting.datetime,
-            'invited_username': invited_username,
-            'confirmed_username': [user.username for user in meeting.get_confirmed_users()]
+            'meeting_name':
+                meeting.name,
+            'leader_username':
+                meeting.get_leader_name(),
+            'datetime':
+                meeting.datetime,
+            'invited_username':
+                invited_username,
+            'confirmed_username': [
+                user.username for user in meeting.get_confirmed_users()
+            ]
         }
     }
     return jsonify(ret), 200
@@ -128,9 +136,9 @@ def create_meeting():
     if not meeting_info:
         return jsonify({"msg": "Invalid request"}), 401
     new_datetime = datetime.strptime(meeting_info['datetime'], '%Y-%m-%d %H:%M')
-    meeting = Meetings(
-        meeting_name = meeting_info['meeting_name'],
-        datetime = new_datetime)
+    meeting = Meetings(meeting_name=meeting_info['meeting_name'],
+                       datetime=new_datetime,
+                       leader_id=get_jwt_identity())
     meeting.set_invited_users(meeting_info['invited_users_id'])
     db.session.add(meeting)
     db.session.commit()
@@ -160,7 +168,8 @@ def update_meeting():
     meeting_info = data['data']
     if meeting.leader_id == user_id:
         meeting.meeting_name = meeting_info['meeting_name']
-        new_datetime = datetime.strptime(meeting_info['datetime'], '%Y-%m-%d %H:%M')
+        new_datetime = datetime.strptime(meeting_info['datetime'],
+                                         '%Y-%m-%d %H:%M')
         meeting.datetime = new_datetime
         meeting.set_invited_users(meeting_info['invited_users_id'])
     return jsonify({"msg": "Success"}), 200
@@ -171,8 +180,7 @@ def update_meeting():
 def confirm_meeting():
     meeting_id = request.args.get('meeting_id', type=str)
     relationship = MU_Relationship.query.filter_by(
-        meeting_id=meeting_id,
-        user_id=get_jwt_identity()).first()
+        meeting_id=meeting_id, user_id=get_jwt_identity()).first()
     if not relationship:
         return jsonify({"msg": "Failed to confirm your meeting"}), 401
     relationship.approved = True
