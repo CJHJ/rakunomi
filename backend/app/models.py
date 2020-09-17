@@ -23,22 +23,27 @@ class Users(db.Model):
 
     def get_confirmed_meetings(self):
         meetings = Meetings.query.join(
-            MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
-            MU_Relationship.user_id == self.id, MU_Relationship.approved == True)
+            MU_Relationship,
+            (MU_Relationship.meeting_id == Meetings.id)).filter(
+                MU_Relationship.user_id == self.id,
+                MU_Relationship.approved == True)
         return meetings.filter(Meetings.datetime > datetime.utcnow())\
             .order_by(Meetings.datetime.desc())
 
     def get_invited_meetings(self):
         meetings = Meetings.query.join(
-            MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
-            MU_Relationship.user_id == self.id, MU_Relationship.approved==False)
+            MU_Relationship,
+            (MU_Relationship.meeting_id == Meetings.id)).filter(
+                MU_Relationship.user_id == self.id,
+                MU_Relationship.approved == False)
         return meetings.filter(Meetings.datetime > datetime.utcnow())\
             .order_by(Meetings.datetime.desc())
 
     def get_past_meetings(self):
         meetings = Meetings.query.join(
-            MU_Relationship, (MU_Relationship.meeting_id == Meetings.id)).filter(
-            MU_Relationship.user_id == self.id)
+            MU_Relationship,
+            (MU_Relationship.meeting_id == Meetings.id)).filter(
+                MU_Relationship.user_id == self.id)
         return meetings.filter(Meetings.datetime < datetime.utcnow())\
             .order_by(Meetings.datetime.desc())
 
@@ -55,6 +60,7 @@ class Meetings(db.Model):
 
     def get_wishlist_items(self):
         return Items.query.filter(Items.meeting_id == self.id)
+
 
 class MU_Relationship(db.Model):
     meeting_id = db.Column(db.Integer,
