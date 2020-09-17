@@ -189,7 +189,7 @@ export default function CreateMeeting() {
           </Form.Group>
           {/* Select preset */}
           <Form.Group>
-            <Form.Label>Presets</Form.Label>
+            <Form.Label>Preset</Form.Label>
             {!presetLoading && (
               <Button variant="success" onClick={getPresets}>
                 Refresh
