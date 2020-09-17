@@ -55,15 +55,13 @@ export default function ViewMeetings() {
     setAllMeetings(fetchedAllMeetings);
   };
 
-  const goToMeetingViewPage = (event) => {
+  const goToDetailPage = (event) => {
     const meeting_id = event.target.value;
+    console.log("goToDetailPage");
     console.log({ meeting_id });
     history.push("/meeting/view");
-    //TODO accept API
   };
-  const goToDetailPage = () => {
-    console.log("goToDetailPage");
-  };
+
   const goToFeedBackPage = (event) => {
     const meeting_id = event.target.value;
     const targetMeeting = participatedMeetings.find(
@@ -79,7 +77,7 @@ export default function ViewMeetings() {
         <Tab eventKey={MENU_ITEMS[0]} title={MENU_ITEMS[0]}>
           <MeetingList
             meetings={invitedMeetings}
-            meetingAction={goToMeetingViewPage}
+            meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[0]}
           />
         </Tab>
@@ -100,7 +98,7 @@ export default function ViewMeetings() {
         <Tab eventKey={MENU_ITEMS[3]} title={MENU_ITEMS[3]}>
           <MeetingList
             meetings={allMeetings}
-            meetingAction={goToFeedBackPage}
+            meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[3]}
           />
         </Tab>

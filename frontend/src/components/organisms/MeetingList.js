@@ -33,8 +33,12 @@ export default function MeetingList(props) {
         <Card key={meeting.meeting_id} className="text-center">
           <Card.Body>
             <Card.Title>{meeting.meeting_name}</Card.Title>
-            <Card.Text>Invited by:{meeting.leader_username}</Card.Text>
-            <Card.Text>Datetime: {meeting.Datetime}</Card.Text>
+            {meeting.leader_username && (
+              <Card.Text>Invited by:{meeting.leader_username}</Card.Text>
+            )}
+            {meeting.datetime && (
+              <Card.Text>datetime: {meeting.datetime}</Card.Text>
+            )}
             <Button
               variant="primary"
               value={meeting.meeting_id}
