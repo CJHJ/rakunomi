@@ -9,6 +9,7 @@ import {
   API_CREATE_WISHLIST_URL,
   API_SEARCH_PRODUCT_ID,
   API_UPDATE_WISHLIST_URL,
+  API_CONFIRM_MEETING_URL,
 } from "../constants";
 
 const searchUser = (username) => {
@@ -172,6 +173,37 @@ const updateWishlist = (meetingId, wishlist) => {
   });
 };
 
+const updateMeeting = (meetingId, meetingName, datetime) => {
+  console.log(meetingName);
+  return axios({
+    method: "put",
+    url: API_CREATE_MEETING_URL,
+    data: {
+      meeting_id: meetingId,
+      data: {
+        meeting_name: meetingName,
+        datetime: datetime,
+      },
+    },
+    headers: { "Content-Type": "application/json", ...authHeader() },
+  }).then((response) => {
+    return response.data;
+  });
+};
+
+const confirmMeeting = (meetingId) => {
+  return axios({
+    method: "get",
+    url: API_CONFIRM_MEETING_URL,
+    params: {
+      meeting_id: meetingId,
+    },
+    headers: authHeader(),
+  }).then((response) => {
+    return response.data;
+  });
+};
+
 export default {
   searchUser,
   getPresets,
@@ -183,4 +215,6 @@ export default {
   getWishlist,
   getProductInfo,
   updateWishlist,
+  confirmMeeting,
+  updateMeeting,
 };

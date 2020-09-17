@@ -171,11 +171,14 @@ def update_meeting():
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
     meeting_info = data['data']
     if meeting.leader_id == user_id:
-        meeting.meeting_name = meeting_info['meeting_name']
+        
+        meeting.name = meeting_info['meeting_name']
         new_datetime = datetime.strptime(meeting_info['datetime'],
                                          '%Y-%m-%d %H:%M')
         meeting.datetime = new_datetime
-        meeting.set_invited_users(meeting_info['invited_users_id'])
+        # meeting.set_invited_users(meeting_info['invited_users_id'])
+        
+    db.session.commit()
     return jsonify({"msg": "Success"}), 200
 
 
@@ -185,9 +188,11 @@ def confirm_meeting():
     meeting_id = request.args.get('meeting_id', type=str)
     relationship = MU_Relationship.query.filter_by(
         meeting_id=meeting_id, user_id=get_jwt_identity()).first()
+    print(meeting_id)
     if not relationship:
         return jsonify({"msg": "Failed to confirm your meeting"}), 401
     relationship.approved = True
+    db.session.commit()
     return jsonify({"msg": "Success"}), 200
 
 

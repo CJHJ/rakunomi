@@ -36,7 +36,7 @@ export default function EditMeeting() {
   };
 
   const [dateTimeValue, onDateTimeChange] = useState(
-    moment(meeting.datetime, "YYYY-MM-DD HH:mm")
+    moment(meeting.datetime, "YYYY-MM-DD HH:mm").toDate()
   );
   const [participantList, setParticipantList] = useState(new Array());
 
@@ -234,51 +234,24 @@ export default function EditMeeting() {
   };
 
   const handleSubmit = (e) => {
-    console.log(moment(dateTimeValue).format("YYYY-MM-DD HH:mm"));
-    MeetingService.createMeeting(
-      meetingName,
-      moment(dateTimeValue).format("YYYY-MM-DD HH:mm"),
-      participantList.map((member) => member.user_id)
-    ).then(
-      (response) => {
-        MeetingService.addWishlistToDatabase(
-          response.meeting_id,
-          wishlist
-        ).then(
-          (responseWl) => {
-            history.push("/Home");
-            window.location.reload();
-          },
-          (error) => {
-            console.log(error.response);
-            const resMessage =
-              (error.response &&
-                error.response.data &&
-                error.response.data.msg) ||
-              error.message ||
-              error.toString();
-
-            setSearchItemLoading(false);
-            setSearchItemMessage(resMessage);
-          }
-        );
-      },
-      (error) => {
-        console.log(error.response);
-        const resMessage =
-          (error.response && error.response.data && error.response.data.msg) ||
-          error.message ||
-          error.toString();
-
-        setSearchItemLoading(false);
-        setSearchItemMessage(resMessage);
-      }
-    );
+    MeetingService.confirmMeeting(meeting.meeting_id).then(() => {
+      history.push("/meetings");
+    });
   };
 
   const handleSave = () => {
     MeetingService.updateWishlist(meeting.meeting_id, wishlist).then(() => {
       window.location.reload();
+    });
+  };
+
+  const handleUpdate = () => {
+    MeetingService.updateMeeting(
+      meeting.meeting_id,
+      meetingName,
+      moment(dateTimeValue).format("YYYY-MM-DD HH:mm")
+    ).then(() => {
+      history.push("/meetings");
     });
   };
 
@@ -323,7 +296,7 @@ export default function EditMeeting() {
                   placeholder="Meeting name"
                   onChange={(e) => setMeetingName(e.target.value)}
                   value={meetingName}
-                  disabled
+                  disabled={meeting.leader_username != currentUser.user_name}
                 />
               </Col>
             </Row>
@@ -338,7 +311,7 @@ export default function EditMeeting() {
                 <DateTimePicker
                   onChange={onDateTimeChange}
                   value={dateTimeValue}
-                  disabled
+                  disabled={meeting.leader_username != currentUser.user_name}
                 />
               </Col>
             </Row>
@@ -372,7 +345,10 @@ export default function EditMeeting() {
               <Col>{wishlist.length} items</Col>
               <Col>Total price: {wishlistPrice}円</Col>
               <Col>
-                Price/1 person: {wishlistPrice / participantList.length}円
+                Price/1 person:{" "}
+                {participantList.length == 0
+                  ? "N/A"
+                  : Math.ceil(wishlistPrice / participantList.length) + "円"}
               </Col>
               <Col>
                 <Button
@@ -545,10 +521,17 @@ export default function EditMeeting() {
                 Save
               </Button>
             </Col>
-            {!(meeting.leader_username == currentUser.username) && (
+            {!(meeting.leader_username == currentUser.user_name) && (
               <Col>
                 <Button variety="primary" onClick={handleSubmit}>
                   Accept!
+                </Button>
+              </Col>
+            )}
+            {meeting.leader_username == currentUser.user_name && (
+              <Col>
+                <Button variety="primary" onClick={handleUpdate}>
+                  Save meeting info
                 </Button>
               </Col>
             )}
