@@ -61,7 +61,11 @@ export default function ViewMeetings() {
     const targetMeeting = upcomingMeetings.find(
       (meeting) => meeting.meeting_id === meeting_id
     );
-    history.push("/meeting/view", { meeting: targetMeeting });
+    if (targetMeeting.leader_username === user.user_name) {
+      history.push("/meeting/edit", { meeting: targetMeeting });
+    } else {
+      history.push("/meeting/view", { meeting: targetMeeting });
+    }
   };
   const goToDetailPageAll = (event) => {
     const meeting_id = parseInt(event.target.value, 10);
