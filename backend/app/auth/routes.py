@@ -109,9 +109,10 @@ def search_user():
     """
     username = request.args.get('username', type=str)
     user = Users.query.filter_by(username=username).first()
-    if user is None:
+    if not user:
         return jsonify({"msg": "Can't find this user"}), 401
-    return jsonify({"msg": "Find this user!"}), 200
+    return jsonify({"msg": "Find this user!",
+                    "user_id": user.id}), 200
 
 
 @bp.route('/user/<username>', methods=['GET'])
@@ -123,6 +124,7 @@ def get_user(username):
     ret = {
         'mgs': "Success",
         'data': {
+            'user_id': user.id,
             'username': user.username,
             'email': user.email,
             'rakuten_id': user.rakuten_id,
