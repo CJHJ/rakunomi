@@ -7,7 +7,7 @@ export default function FeedbackRatingForm(props) {
     <Container fluid>
       <Row>
         <Col sm={6}>
-          <h2>{"Haw was the Raku Nomi"}</h2>
+          <h2>{"How was the Raku Nomi"}</h2>
         </Col>
         <Col sm={6}>
           <Form>
