@@ -16,6 +16,7 @@ import ViewMeeting from "./components/pages/ViewMeeting";
 import SignIn from "./components/pages/SignIn";
 import SignUp from "./components/pages/SignUp";
 import Feedback from "./components/pages/Feedback";
+import EditMeeting from "./components/pages/EditMeeting";
 
 function App() {
   return (
@@ -39,6 +40,11 @@ function App() {
                 <Redirect to="/signin" />
               ) : (
                 <ViewMeeting />
+            <Route path="/meeting/edit">
+              {!AuthService.getCurrentUser() ? (
+                <Redirect to="/signin" />
+              ) : (
+                <EditMeeting />
               )}
             </Route>
             <Route path="/meetings">

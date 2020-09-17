@@ -105,6 +105,17 @@ img {
   line-height: 1;
 }
 
+.wishlist-text:hover {
+  text-overflow: clip;
+  white-space: normal;
+  word-break: break-all;
+}
+
 .main-meeting-container {
   margin-bottom: 50px;
+}
+
+.slick-prev:before,
+.slick-next:before {
+  color: black;
 }
