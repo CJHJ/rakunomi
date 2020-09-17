@@ -16,9 +16,11 @@ import DateTimePicker from "react-datetime-picker";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import moment from "moment";
 
 import AuthService from "../../services/auth.service";
 import MeetingService from "../../services/meeting.service";
+import history from "../../history";
 
 import "./css/CreateMeeting.css";
 
@@ -31,6 +33,9 @@ export default function CreateMeeting() {
   );
 
   // Handlers
+  // -- Meeting name
+  const [meetingName, setMeetingName] = useState("");
+
   // -- Participants
   const [participantLoading, setParticipantLoading] = useState(false);
   const [participantMessage, setParticipantMessage] = useState("");
@@ -39,9 +44,9 @@ export default function CreateMeeting() {
     setParticipantMessage("");
     setParticipantLoading(true);
     MeetingService.searchUser(participantName).then(
-      () => {
+      (data) => {
         const tempUser = {
-          user_id: participantList.length,
+          user_id: data.user_id,
           user_name: participantName,
         };
 
@@ -206,6 +211,49 @@ export default function CreateMeeting() {
     });
   };
 
+  const handleSubmit = (e) => {
+    console.log(moment(dateTimeValue).format("YYYY-MM-DD HH:mm"));
+    MeetingService.createMeeting(
+      meetingName,
+      moment(dateTimeValue).format("YYYY-MM-DD HH:mm"),
+      participantList.map((member) => member.user_id)
+    ).then(
+      (response) => {
+        MeetingService.addWishlistToDatabase(
+          response.meeting_id,
+          wishlist
+        ).then(
+          (responseWl) => {
+            history.push("/Home");
+            window.location.reload();
+          },
+          (error) => {
+            console.log(error.response);
+            const resMessage =
+              (error.response &&
+                error.response.data &&
+                error.response.data.msg) ||
+              error.message ||
+              error.toString();
+
+            setSearchItemLoading(false);
+            setSearchItemMessage(resMessage);
+          }
+        );
+      },
+      (error) => {
+        console.log(error.response);
+        const resMessage =
+          (error.response && error.response.data && error.response.data.msg) ||
+          error.message ||
+          error.toString();
+
+        setSearchItemLoading(false);
+        setSearchItemMessage(resMessage);
+      }
+    );
+  };
+
   // Run on mount
   useEffect(() => {
     getPresets();
@@ -221,10 +269,34 @@ export default function CreateMeeting() {
       <h1>Create Meeting</h1>
       <Form>
         <Card>
+          <Form.Group>
+            <Row>
+              <Col>
+                <Form.Label>Meeting Name</Form.Label>
+              </Col>
+              <Col>
+                <Form.Control
+                  type="text"
+                  placeholder="Meeting name"
+                  onChange={(e) => setMeetingName(e.target.value)}
+                  value={meetingName}
+                />
+              </Col>
+            </Row>
+          </Form.Group>
           {/* Time schedule */}
           <Form.Group>
-            <Form.Label>Time schedule</Form.Label>
-            <DateTimePicker onChange={onDateTimeChange} value={dateTimeValue} />
+            <Row>
+              <Col>
+                <Form.Label>Time schedule</Form.Label>
+              </Col>
+              <Col>
+                <DateTimePicker
+                  onChange={onDateTimeChange}
+                  value={dateTimeValue}
+                />
+              </Col>
+            </Row>
           </Form.Group>
           {/* Select participants */}
           <Form.Group>
@@ -514,7 +586,9 @@ export default function CreateMeeting() {
             </Row>
           </section>
           {/* Submit button! */}
-          <Button variety="primary">Create!</Button>
+          <Button variety="primary" onClick={handleSubmit}>
+            Create!
+          </Button>
         </Card>
       </Form>
     </Container>

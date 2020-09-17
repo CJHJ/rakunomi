@@ -6,6 +6,8 @@ const API_SEARCH_USER_URL = API_URL + "search/user";
 const API_GET_PRESET_URL = API_URL + "preset";
 const API_SEARCH_ITEM_URL = API_URL + "search/items";
 const API_RECOMMEND_ITEM_URL = API_URL + "recommended";
+const API_CREATE_MEETING_URL = API_URL + "meeting";
+const API_CREATE_WISHLIST_URL = API_URL + "wishlist";
 
 export {
   API_SIGNIN_URL,
@@ -14,4 +16,6 @@ export {
   API_GET_PRESET_URL,
   API_SEARCH_ITEM_URL,
   API_RECOMMEND_ITEM_URL,
+  API_CREATE_MEETING_URL,
+  API_CREATE_WISHLIST_URL,
 };

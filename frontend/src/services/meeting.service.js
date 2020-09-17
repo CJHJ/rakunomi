@@ -5,6 +5,8 @@ import {
   API_SEARCH_ITEM_URL,
   API_GET_PRESET_URL,
   API_RECOMMEND_ITEM_URL,
+  API_CREATE_MEETING_URL,
+  API_CREATE_WISHLIST_URL,
 } from "../constants";
 
 const searchUser = (username) => {
@@ -59,9 +61,55 @@ const recommendItem = (keyword) => {
   });
 };
 
+const createMeeting = (meetingName, datetime, participantsId) => {
+  var meetingData = {
+    meeting_name: meetingName,
+    datetime: datetime,
+    invited_users_id: participantsId,
+  };
+
+  return axios
+    .post(API_CREATE_MEETING_URL, meetingData, {
+      headers: {
+        "Content-Type": "application/json",
+        ...authHeader(),
+      },
+    })
+    .then((response) => {
+      return response.data;
+    });
+};
+
+const addWishlistToDatabase = (meeting_id, wishlist) => {
+  const wishlistFormatted = wishlist.map((wish) => {
+    return {
+      product_id: wish.rakuten_pruduct_id,
+      amount: 1,
+      total_price: wish.price,
+    };
+  });
+
+  return axios
+    .post(
+      API_CREATE_WISHLIST_URL,
+      { meeting_id, data: wishlistFormatted },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          ...authHeader(),
+        },
+      }
+    )
+    .then((response) => {
+      return response.data;
+    });
+};
+
 export default {
   searchUser,
   getPresets,
   searchItem,
   recommendItem,
+  createMeeting,
+  addWishlistToDatabase,
 };

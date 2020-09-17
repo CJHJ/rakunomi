@@ -60,11 +60,11 @@ def create_wishlist():
     data = request.get_json(silent=True)
     if not data:
         return jsonify({"msg": "Invalid request"}), 401
-    meeing = Meetings.query.get(data["meeing_id"])
-    if not meeing:
+    meeting = Meetings.query.get(data["meeting_id"])
+    if not meeting:
         return jsonify({"msg": "Failed to find this meeting"}), 401
     for it in data["data"]:
-        item = Items(meeting_id=data["meeing_id"],
+        item = Items(meeting_id=data["meeting_id"],
                      product_id=it["product_id"],
                      amount=it["amount"],
                      price=it["total_price"])
