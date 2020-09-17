@@ -133,16 +133,18 @@ def create_meeting():
     }
     """
     meeting_info = request.get_json(silent=True)
+    print(meeting_info)
     if not meeting_info:
         return jsonify({"msg": "Invalid request"}), 401
     new_datetime = datetime.strptime(meeting_info['datetime'], '%Y-%m-%d %H:%M')
-    meeting = Meetings(meeting_name=meeting_info['meeting_name'],
+    meeting = Meetings(name=meeting_info['meeting_name'],
                        datetime=new_datetime,
                        leader_id=get_jwt_identity())
-    meeting.set_invited_users(meeting_info['invited_users_id'])
     db.session.add(meeting)
+    db.session.flush()
+    meeting.set_invited_users(meeting_info['invited_users_id'])
     db.session.commit()
-    return jsonify({"msg": "Success"}), 200
+    return jsonify({"msg": "Success", "meeting_id": meeting.id}), 200
 
 
 # only allow leader to change meeting info

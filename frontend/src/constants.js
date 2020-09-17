@@ -2,4 +2,20 @@ const API_URL = "http://127.0.0.1:5000/api/";
 const API_SIGNUP_URL = API_URL + "sign_up";
 const API_SIGNIN_URL = API_URL + "sign_in";
 
-export { API_SIGNIN_URL, API_SIGNUP_URL };
+const API_SEARCH_USER_URL = API_URL + "search/user";
+const API_GET_PRESET_URL = API_URL + "preset";
+const API_SEARCH_ITEM_URL = API_URL + "search/items";
+const API_RECOMMEND_ITEM_URL = API_URL + "recommended";
+const API_CREATE_MEETING_URL = API_URL + "meeting";
+const API_CREATE_WISHLIST_URL = API_URL + "wishlist";
+
+export {
+  API_SIGNIN_URL,
+  API_SIGNUP_URL,
+  API_SEARCH_USER_URL,
+  API_GET_PRESET_URL,
+  API_SEARCH_ITEM_URL,
+  API_RECOMMEND_ITEM_URL,
+  API_CREATE_MEETING_URL,
+  API_CREATE_WISHLIST_URL,
+};
