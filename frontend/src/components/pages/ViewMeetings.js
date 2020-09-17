@@ -1,6 +1,6 @@
 import React from "react";
 import { MeetingList } from "../organisms";
-import { Container, Tabs, Tab, Modal, Button } from "react-bootstrap";
+import { Container, Tabs, Tab } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import AuthService from "../../services/auth.service";
 
@@ -10,6 +10,7 @@ import {
   fetchParticipatedMeetings,
   fetchAllMeetings,
 } from "../../libs/api/meetings";
+import { Beer, ClinkingBeer, Invited, Participated, All } from "../atoms/Icons";
 
 const MENU_ITEMS = ["Invited", "Upcoming", "Past", "Others"];
 const ACTION_NAMES = [
@@ -72,30 +73,70 @@ export default function ViewMeetings() {
 
   return (
     <Container>
-      <h1>Meeting lists</h1>
+      <h1 className="text-center">
+        <Beer />
+        Nomikai lists
+        <Beer />
+      </h1>
       <Tabs>
-        <Tab eventKey={MENU_ITEMS[0]} title={MENU_ITEMS[0]}>
+        <Tab
+          eventKey={MENU_ITEMS[0]}
+          title={
+            <div className="text-center">
+              <Invited />
+              <br />
+              {MENU_ITEMS[0]}
+            </div>
+          }
+        >
           <MeetingList
             meetings={invitedMeetings}
             meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[0]}
           />
         </Tab>
-        <Tab eventKey={MENU_ITEMS[1]} title={MENU_ITEMS[1]}>
+        <Tab
+          eventKey={MENU_ITEMS[1]}
+          title={
+            <div className="text-center">
+              <ClinkingBeer />
+              <br />
+              {MENU_ITEMS[1]}
+            </div>
+          }
+        >
           <MeetingList
             meetings={upcomingMeetings}
             meetingAction={goToDetailPage}
             actionName={ACTION_NAMES[1]}
           />
         </Tab>
-        <Tab eventKey={MENU_ITEMS[2]} title={MENU_ITEMS[2]}>
+        <Tab
+          eventKey={MENU_ITEMS[2]}
+          title={
+            <div className="text-center">
+              <Participated />
+              <br />
+              {MENU_ITEMS[2]}
+            </div>
+          }
+        >
           <MeetingList
             meetings={participatedMeetings}
             meetingAction={goToFeedBackPage}
             actionName={ACTION_NAMES[2]}
           />
         </Tab>
-        <Tab eventKey={MENU_ITEMS[3]} title={MENU_ITEMS[3]}>
+        <Tab
+          eventKey={MENU_ITEMS[3]}
+          title={
+            <div className="text-center">
+              <All />
+              <br />
+              {MENU_ITEMS[3]}
+            </div>
+          }
+        >
           <MeetingList
             meetings={allMeetings}
             meetingAction={goToDetailPage}
