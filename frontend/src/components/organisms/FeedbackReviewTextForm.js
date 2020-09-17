@@ -9,7 +9,7 @@ export default function FeedbackReviewTextForm(props) {
       <Row>
         <Col sm={6}>
           <h2>
-            {`How was the foods and drinks you ordered in "${meeting.groupName}"`}
+            {`How was the foods and drinks you ordered in "${meeting.group_name}"`}
           </h2>
           <Pandas rating={rating} />
         </Col>
