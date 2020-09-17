@@ -25,17 +25,18 @@ def login():
     if form.validate():
         user = Users.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            return jsonify({
-                "msg": "Bad username or password",
-                'data': ""
-            }), 401
+            return jsonify({"msg": "Bad username or password", 'data': ""}), 401
         expires = datetime.timedelta(days=app.config['EXPIRE_DAYS'])
         ret = {
             'mgs': 'Success',
             'data': {
-                'token': create_access_token(identity=user.id, expires_delta=expires),
-                'user_id': user.id,
-                'user_name': user.username
+                'token':
+                    create_access_token(identity=user.id,
+                                        expires_delta=expires),
+                'user_id':
+                    user.id,
+                'user_name':
+                    user.username
             }
         }
         return jsonify(ret), 200
@@ -66,12 +67,18 @@ def register():
         db.session.add(user)
         db.session.commit()
         expires = datetime.timedelta(days=app.config['EXPIRE_DAYS'])
-        ret = {'msg': 'Sign up succeed!',
-               'data':{
-                    'token': create_access_token(identity=user.id, expires_delta=expires),
-                    'user_id': user.id,
-                    'user_name': user.username
-               }}
+        ret = {
+            'msg': 'Sign up succeed!',
+            'data': {
+                'token':
+                    create_access_token(identity=user.id,
+                                        expires_delta=expires),
+                'user_id':
+                    user.id,
+                'user_name':
+                    user.username
+            }
+        }
         return jsonify(ret), 200
     return jsonify({"msg": form.errors}), 401
 
