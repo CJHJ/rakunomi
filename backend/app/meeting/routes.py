@@ -203,10 +203,10 @@ def get_wishlist():
         'msg':
             'Success',
         'data': [{
-            'item id': it.id,
-            'product id': it.product_id,
+            'item_id': it.id,
+            'product_id': it.product_id,
             'amount': it.amount,
-            'total price': it.price
+            'total_price': it.price
         } for it in items]
     }
     return jsonify(ret), 200
