@@ -198,7 +198,7 @@ def get_wishlist():
     meeting = Meetings.query.get(meeting_id)
     if not meeting:
         return jsonify({"msg": "Failed to find this meeting", "data": ""}), 401
-    items = meeting.get_wishlist_items.all()
+    items = meeting.get_wishlist_items
     ret = {
         'msg':
             'Success',
