@@ -38,7 +38,7 @@ export default function CreateMeeting() {
     MeetingService.searchUser(participantName).then(
       () => {
         const tempUser = {
-          user_id: participantList.length - 1,
+          user_id: participantList.length,
           user_name: participantName,
         };
 
@@ -157,16 +157,16 @@ export default function CreateMeeting() {
                 <Form.Label>Selected participants</Form.Label>
                 <ol>
                   {participantList.map((participant) => {
-                    if (currentUser.user_id == participant.user_id) {
+                    if (currentUser.user_name == participant.user_name) {
                       return (
-                        <li key={participant.user_id}>
+                        <li key={participant.user_name}>
                           <b>{participant.user_name}</b> (leader)
                         </li>
                       );
                     }
 
                     return (
-                      <li key={participant.user_id}>
+                      <li key={participant.user_name}>
                         <Row>
                           <Col>{participant.user_name}</Col>
                           <Col>
