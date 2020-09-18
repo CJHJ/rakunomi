@@ -72,7 +72,7 @@ export default function ViewMeetings() {
     const targetMeeting = allMeetings.find(
       (meeting) => meeting.meeting_id === meeting_id
     );
-    history.push("/meeting/view", { meeting: targetMeeting });
+    history.push("/meeting/view", { meeting: targetMeeting, hide: true });
   };
 
   const goToEditPage = (event) => {
