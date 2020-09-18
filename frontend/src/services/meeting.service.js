@@ -95,7 +95,7 @@ const addWishlistToDatabase = (meetingId, wishlist) => {
   return axios
     .post(
       API_CREATE_WISHLIST_URL,
-      { meetingId, data: wishlistFormatted },
+      { meeting_id: meetingId, data: wishlistFormatted },
       {
         headers: {
           "Content-Type": "application/json",
@@ -142,8 +142,6 @@ const getProductInfo = (productId) => {
       product_id: productId,
     },
     headers: authHeader(),
-  }).then((response) => {
-    return response.data;
   });
 };
 

@@ -349,6 +349,7 @@ def create_feedback():
             return jsonify(
                 {"msg": "Only allowed to give feedback to your meeting"}), 401
         relationship.review = form.review.data
+        db.session.commit()
         return jsonify({"msg": "Success"}), 200
     return jsonify({"msg": form.errors}), 401
 

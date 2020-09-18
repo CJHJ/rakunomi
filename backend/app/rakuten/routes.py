@@ -134,12 +134,21 @@ def search_with_itemCode():
     product_id = request.args.get('product_id', type=str)
     if product_id == None:
         abort(400)
-    items = []
+    item = []
 
+    max_call = 10
     fetched_items = call_rakuten_search_API_with_product_id(
         product_id)
-    if len(fetched_items) == 0:
-        return jsonify({'items': []})
+    if (len(fetched_items) == 0):
+        return jsonify({'item': []}), 200
+    # for i in range(max_call):
+    #     if (len(fetched_items) != 0):
+    #         break
+    #     fetched_items = call_rakuten_search_API_with_product_id(
+    #     product_id)
+            
+    # print(fetched_items)
+    time.sleep(0.2)
 
     item = extract_item_attribute(fetched_items[0]['Item'])
     return jsonify({'item': item}), 200
@@ -178,7 +187,9 @@ def call_rakuten_search_API_with_product_id(product_id):
     try:
         fetched_items = response_json["Items"]
         return fetched_items
-    except:
+    except Exception as e:
+        print(response_json)
+        print(str(e))
         return []
 
 
