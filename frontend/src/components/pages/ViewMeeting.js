@@ -8,6 +8,7 @@ import {
   fetchItemsInfoWithProductCodes,
 } from "../../libs/api/meeting";
 import { ItemCard } from "../organisms";
+import { getFeedbacks } from "../../libs/api/feedback";
 
 export default function CreateMeeting() {
   const location = useLocation();
@@ -17,6 +18,11 @@ export default function CreateMeeting() {
   const [wishlist, setWishList] = React.useState();
   const [items, setItems] = React.useState();
   const [totalPrice, setTotalPrice] = React.useState();
+  const [visible, setVisible] = React.useState(true);
+  const [reviews, setReviews] = React.useState([
+    { feedback_msg: "aaaaa" },
+    { feedback_msg: "bbb" },
+  ]);
 
   React.useEffect(() => {
     initState();
@@ -35,9 +41,13 @@ export default function CreateMeeting() {
     return <div>不正な画面遷移</div>;
   }
   const initState = async () => {
-    const { meeting } = location.state;
+    const { meeting, hide } = location.state;
+    setVisible(!hide);
     setMeeting(meeting);
     const fetchedMeetingInfo = await fetchMeeting(meeting.meeting_id);
+    const fetchedReviews = await getFeedbacks(meeting.meeting_id);
+    setReviews(fetchedReviews);
+    console.log({ fetchedReviews });
     const fetchedWishlist = await fetchWishlist(meeting.meeting_id);
     const fetchedItems = await fetchItemsInfoWithProductCodes(fetchedWishlist);
     setMeetingInfo(fetchedMeetingInfo);
@@ -61,26 +71,47 @@ export default function CreateMeeting() {
     return res;
   };
 
+  const reviewList = () => {
+    const allReviews = reviews.map((review) => (
+      <Card>{review.feedback_msg}</Card>
+    ));
+    return allReviews;
+  };
+
   return (
     <Container className="main-meeting-container">
       <h1>Meeting Detail</h1>
       <Card>
-        <div>{meetingInfo.meeting_name || "No meeting name"}</div>
-        <div>From: {meeting.datetime}</div>
-        <div>Inviter: {meetingInfo.leader_username}</div>
-        <div>Invited members: {userList(meetingInfo.invited_username)}</div>
-        <div>Joined members: {userList(meetingInfo.confirmed_username)}</div>
+        <div>Nomikai Name:{meetingInfo.meeting_name || "No Nomikai name"}</div>
+        {visible && (
+          <div>
+            <div>From: {meeting.datetime}</div>
+            <div>Inviter: {meetingInfo.leader_username}</div>
+            <div>Invited members: {userList(meetingInfo.invited_username)}</div>
+            <div>
+              Joined members: {userList(meetingInfo.confirmed_username)}
+            </div>
+            <div>
+              Price for one person:
+              {totalPrice / meetingInfo.invited_username.length} yen
+            </div>
+          </div>
+        )}
         <div>Total Price: {totalPrice} yen</div>
-        <div>
-          Price for one person:{" "}
-          {totalPrice / meetingInfo.invited_username.length} yen
-        </div>
       </Card>
       <Container>
         <Row>
           {items.map((item) => (
             <ItemCard item={item} />
           ))}
+        </Row>
+        <Row>
+          {!visible && (
+            <div>
+              <h4>Reviews by attendees</h4>
+              <p>{reviewList()}</p>
+            </div>
+          )}
         </Row>
       </Container>
     </Container>

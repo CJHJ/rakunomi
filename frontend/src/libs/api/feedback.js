@@ -19,3 +19,13 @@ export async function sendFeedback(meetingID, feedback) {
     console.log(e);
   }
 }
+export async function getFeedbacks(meetingID) {
+  const url = `${BASE_URL}/feedback_list?meeting_id=${meetingID}`;
+  const headers = authHeader();
+  const res = await axios({
+    method: "GET",
+    url: url,
+    headers: headers,
+  });
+  return res.data.data;
+}
