@@ -40,11 +40,20 @@ export const fetchItemsInfoWithProductCodes = async (items) => {
       params: {
         product_id: item.product_id,
       },
+    }).then((res) => {
+      if (res.data.item.length == 0) {
+        return {
+          image_URLs: [""],
+          price: item.total_price,
+          item_name: item.product_id,
+        };
+      }
+      return res.data.item;
     });
   });
 
   const resList = await Promise.all(res);
   return resList.map((res) => {
-    return res.data.item;
+    return res;
   });
 };

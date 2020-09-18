@@ -142,8 +142,6 @@ const getProductInfo = (productId) => {
       product_id: productId,
     },
     headers: authHeader(),
-  }).then((response) => {
-    return response.data;
   });
 };
 

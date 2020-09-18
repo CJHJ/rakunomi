@@ -9,6 +9,7 @@ import moment from "moment";
 
 import AuthService from "../../services/auth.service";
 import MeetingService from "../../services/meeting.service";
+import { fetchItemsInfoWithProductCodes } from "../../libs/api/meeting.js";
 
 import "./css/CreateMeeting.css";
 
@@ -29,7 +30,9 @@ export default function EditMeeting() {
   const updateMeetingInfo = (data) => {
     setMeetingInfo((old) => {
       setParticipantList((old) => {
-        return data.data.invited_username;
+        return meeting.leader_username == currentUser.user_name
+          ? data.data.invited_username
+          : data.data.confirmed_username;
       });
       return data.data;
     });
@@ -123,40 +126,11 @@ export default function EditMeeting() {
   };
   const populateWishlist = (meetingId) => {
     const newWishlist = MeetingService.getWishlist(meetingId).then((data) => {
-      const getWishlist = async () => {
-        return Promise.all(
-          data.data.map(async (el) => {
-            const productInfo = await MeetingService.getProductInfo(
-              el.product_id
-            ).then(
-              (data) => {
-                console.log(data);
-                // if (typeof data.item === "undefined") {
-                //   window.location.reload();
-                // }
-                return data.item;
-              },
-              (error) => {
-                console.log(error.response);
-                const resMessage =
-                  (error.response &&
-                    error.response.data &&
-                    error.response.data.msg) ||
-                  error.message ||
-                  error.toString();
-              }
-            );
-
-            return productInfo;
-          })
-        );
-      };
-
-      getWishlist().then((tempWishlist) => {
+      console.log(data);
+      fetchItemsInfoWithProductCodes(data.data).then((itemList) => {
         setWishlist(() => {
-          console.log("Updated wishlist!");
-          console.log(tempWishlist);
-          return tempWishlist;
+          console.log(itemList);
+          return itemList;
         });
       });
     });
@@ -518,7 +492,7 @@ export default function EditMeeting() {
           <Row>
             <Col>
               <Button variety="primary" onClick={handleSave}>
-                Save
+                Save wishlist
               </Button>
             </Col>
             {!(meeting.leader_username == currentUser.user_name) && (
