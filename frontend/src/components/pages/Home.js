@@ -15,8 +15,8 @@ class Home extends React.Component {
                 Have you ever wondered about sharing a set food and drink items
                 sold in Rakuten with your friends during the quarantine? You’ve
                 come to the right place! RakuNomi allows you to easily set up a
-                Zoom meeting, together with the food items recommendation
-                directly curated by yours truly from Rakuiten Ichiba.
+                meeting, together with the food items recommendation directly
+                curated by yours truly from Rakuten Ichiba.
               </p>
             </Col>
           </Row>
